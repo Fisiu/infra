@@ -1,0 +1,26 @@
+#cloud-config
+hostname: ${hostname}
+password: ${password}
+chpasswd:
+  expire: false
+ssh_authorized_keys:
+  %{ for key in ssh_keys ~}
+  - "${key}"
+  %{ endfor ~}
+# write_files:
+#   - path: /etc/motd
+#     content: "Hello, world!\n  -- OpenTofu\n"
+
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: true
+
+package_update: true
+packages:
+  # - qemu-guest-agent # this one is part of the template already
+  - doas
+power_state:
+  mode: reboot
+  message: Rebooting machine

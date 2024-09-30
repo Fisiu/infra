@@ -39,6 +39,9 @@ terraform.rc
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform
 
+# vscode stuff
+.vscode
+
 # generated cloud-init
 cloud-init/
 
