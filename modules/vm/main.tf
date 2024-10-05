@@ -2,7 +2,7 @@ resource "proxmox_vm_qemu" "vm" {
   for_each = { for id, config in var.vm_configs : id => config }
 
   depends_on = [
-    null_resource.cloud_init_config_files
+    proxmox_cloud_init_disk.ci
   ]
 
   target_node = var.target_node
@@ -23,8 +23,8 @@ resource "proxmox_vm_qemu" "vm" {
     }
     ide {
       ide2 {
-        cloudinit {
-          storage = "local-lvm"
+        cdrom {
+          iso = proxmox_cloud_init_disk.ci[each.key].id
         }
       }
     }
@@ -38,15 +38,21 @@ resource "proxmox_vm_qemu" "vm" {
     macaddr  = each.value.network_mac
   }
 
-  sockets  = 1
-  cores    = each.value.cores
-  memory   = each.value.memory
-  scsihw   = "virtio-scsi-single"
-  boot     = "order=scsi0"
+  serial {
+    id = 0
+  }
 
-  os_type   = "cloud-init"
-  ipconfig0 = "ip=dhcp"
-  cicustom  = "user=local:snippets/cloud_init_${each.value.name}_user_data_vm.yml"
+  vga {
+    type = "serial0"
+  }
+
+  sockets = 1
+  cores   = each.value.cores
+  memory  = each.value.memory
+  scsihw  = "virtio-scsi-single"
+  boot    = "order=scsi0"
+
+  os_type = "cloud-init"
 }
 
 terraform {
@@ -62,39 +68,41 @@ resource "local_file" "cloud_init_user_data_file" {
   for_each = { for id, config in var.vm_configs : id => config }
 
   content = templatefile("${path.module}/userdata.tftpl", {
-    hostname = each.value.name,
+    hostname = each.value.name
     password = each.value.password
     ssh_keys = each.value.ssh_pub_keys
-    # packages = var.packages
+    packages = each.value.packages
+    commands = each.value.commands
   })
   filename = "${path.module}/cloud-init/${each.value.name}-user-data"
 }
 
-resource "null_resource" "cloud_init_config_files" {
+resource "proxmox_cloud_init_disk" "ci" {
   for_each = { for id, config in var.vm_configs : id => config }
 
-  provisioner "remote-exec" {
-    connection {
-      type     = "ssh"
-      host     = var.ssh_host
-      user     = var.ssh_user
-      password = var.ssh_password
-    }
+  name     = each.value.name
+  pve_node = var.target_node
+  storage  = "local"
 
-    inline = [
-      "echo 'Hello, world!'"
+  # user data from generated config file
+  user_data = local_file.cloud_init_user_data_file[each.key].content
+
+  # dhcp on eth0 works for me
+  network_config = yamlencode({
+    version = 2
+    ethernets = [
+      {
+        eth0 = [
+          {
+            dhcp4 = true
+          }
+        ]
+      }
     ]
-  }
+  })
 
-  provisioner "file" {
-    source      = local_file.cloud_init_user_data_file[each.key].filename
-    destination = "/var/lib/vz/snippets/cloud_init_${each.value.name}_user_data_vm.yml"
-
-    connection {
-      type     = "ssh"
-      host     = var.ssh_host
-      user     = var.ssh_user
-      password = var.ssh_password
-    }
-  }
+  meta_data = yamlencode({
+    instance_id    = sha1(each.value.name)
+    local-hostname = "${each.value.name}"
+  })
 }

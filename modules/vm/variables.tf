@@ -1,5 +1,6 @@
 variable "target_node" {
-  type = string
+  type        = string
+  description = "Target node name where configuration will be applied"
 }
 
 variable "vm_configs" {
@@ -17,6 +18,8 @@ variable "vm_configs" {
     network_mac      = string
     password         = string
     ssh_pub_keys     = list(string)
+    packages         = optional(list(string), [])
+    commands         = optional(list(string), [])
   }))
 }
 

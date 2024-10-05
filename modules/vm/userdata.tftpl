@@ -5,22 +5,49 @@ chpasswd:
   expire: false
 ssh_authorized_keys:
   %{ for key in ssh_keys ~}
-  - "${key}"
+- ${key}
   %{ endfor ~}
-# write_files:
-#   - path: /etc/motd
-#     content: "Hello, world!\n  -- OpenTofu\n"
 
-network:
-  version: 2
-  ethernets:
-    eth0:
-      dhcp4: true
+write_files:
+  - path: /etc/sysctl.d/00-disable_ipv6.conf
+    content: |
+      net.ipv6.conf.all.disable_ipv6 = 1
+      net.ipv6.conf.default.disable_ipv6 = 1
 
+apk_repos:
+  alpine_repo:
+    community_enabled: true
+    version: 'v3.20'
 package_update: true
 packages:
-  # - qemu-guest-agent # this one is part of the template already
-  - doas
+  - qemu-guest-agent
+  # machine specific packages
+  %{ for package in packages ~}
+- ${package}
+  %{ endfor ~}
+
+runcmd:
+  - ln -s /etc/profile.d/color_prompt.sh.disabled /etc/profile.d/color_prompt.sh
+  - rc-update add qemu-guest-agent
+  %{ for command in commands ~}
+- ${command}
+  %{ endfor ~}
+
+keyboard:
+  layout: pl
+  variant: pl
+
+ntp:
+  enabled: true
+  ntp_client: chrony
+
 power_state:
   mode: reboot
   message: Rebooting machine
+
+final_message: |
+  cloud-init has finished
+  version: $version
+  timestamp: $timestamp
+  datasource: $datasource
+  uptime: $uptime
