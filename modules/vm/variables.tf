@@ -8,6 +8,7 @@ variable "vm_configs" {
   type = list(object({
     clone            = string
     name             = string
+    desc             = optional(string, "")
     cores            = optional(number, 1)
     memory           = optional(number, 1024)
     disk_size        = optional(string, "1G")
@@ -15,21 +16,10 @@ variable "vm_configs" {
     network_bridge   = optional(string, "vmbr0")
     network_vlan     = optional(string, "")
     network_firewall = optional(bool, true)
-    network_mac      = string
+    network_mac      = optional(string)
     password         = string
     ssh_pub_keys     = list(string)
     packages         = optional(list(string), [])
     commands         = optional(list(string), [])
   }))
-}
-
-variable "ssh_host" {
-  type = string
-}
-variable "ssh_user" {
-  type = string
-}
-variable "ssh_password" {
-  type      = string
-  sensitive = true
 }

@@ -8,6 +8,7 @@ resource "proxmox_vm_qemu" "vm" {
   target_node = var.target_node
   clone       = each.value.clone
   name        = each.value.name
+  desc        = each.value.desc
   agent       = each.value.agent
 
   disks {
@@ -53,6 +54,11 @@ resource "proxmox_vm_qemu" "vm" {
   boot    = "order=scsi0"
 
   os_type = "cloud-init"
+  lifecycle {
+    ignore_changes = [
+      network # Prevent Terraform from detecting changes in the network configuration
+    ]
+  }
 }
 
 terraform {
@@ -86,20 +92,6 @@ resource "proxmox_cloud_init_disk" "ci" {
 
   # user data from generated config file
   user_data = local_file.cloud_init_user_data_file[each.key].content
-
-  # dhcp on eth0 works for me
-  network_config = yamlencode({
-    version = 2
-    ethernets = [
-      {
-        eth0 = [
-          {
-            dhcp4 = true
-          }
-        ]
-      }
-    ]
-  })
 
   meta_data = yamlencode({
     instance_id    = sha1(each.value.name)

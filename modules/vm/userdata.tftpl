@@ -1,6 +1,7 @@
 #cloud-config
 hostname: ${hostname}
 password: ${password}
+disable_root: true
 chpasswd:
   expire: false
 ssh_authorized_keys:
@@ -9,16 +10,15 @@ ssh_authorized_keys:
   %{ endfor ~}
 
 write_files:
-  - path: /etc/sysctl.d/00-disable_ipv6.conf
+  # disable IPv6
+  - path: /etc/sysctl.d/99-custom.conf
     content: |
-      net.ipv6.conf.all.disable_ipv6 = 1
-      net.ipv6.conf.default.disable_ipv6 = 1
+      # disable ipv6
+      net.ipv6.conf.all.disable_ipv6=1
+      net.ipv6.conf.default.disable_ipv6=1
 
-apk_repos:
-  alpine_repo:
-    community_enabled: true
-    version: 'v3.20'
 package_update: true
+package_upgrade: true
 packages:
   - qemu-guest-agent
   # machine specific packages
@@ -27,19 +27,16 @@ packages:
   %{ endfor ~}
 
 runcmd:
-  - ln -s /etc/profile.d/color_prompt.sh.disabled /etc/profile.d/color_prompt.sh
-  - rc-update add qemu-guest-agent
+  - systemctl enable --now qemu-guest-agent
   %{ for command in commands ~}
 - ${command}
   %{ endfor ~}
 
 keyboard:
   layout: pl
-  variant: pl
 
 ntp:
   enabled: true
-  ntp_client: chrony
 
 power_state:
   mode: reboot
