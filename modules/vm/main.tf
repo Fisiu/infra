@@ -31,12 +31,16 @@ resource "proxmox_vm_qemu" "vm" {
     }
   }
 
-  network {
-    model    = "virtio"
-    bridge   = each.value.network_bridge
-    tag      = each.value.network_vlan
-    firewall = each.value.network_firewall
-    macaddr  = each.value.network_mac
+  dynamic "network" {
+    for_each = each.value.networks
+
+    content {
+      model    = "virtio"
+      bridge   = network.value.bridge
+      tag      = network.value.vlan
+      firewall = network.value.firewall
+      macaddr  = network.value.mac
+    }
   }
 
   serial {
