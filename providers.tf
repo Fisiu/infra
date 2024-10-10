@@ -37,4 +37,22 @@ terraform {
       version = "3.0.1-rc4"
     }
   }
+
+  backend "s3" {
+    bucket = "opentofu"
+    key    = "terraform.tfstate"
+
+    endpoints = {
+      s3 = var.minio_s3_endpoint
+    }
+    region                      = "main"
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+    skip_region_validation      = true
+    skip_requesting_account_id  = true
+    use_path_style              = true
+
+    access_key = var.minio_s3_api_key
+    secret_key = var.minio_s3_secret_key
+  }
 }
