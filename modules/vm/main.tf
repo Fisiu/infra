@@ -9,6 +9,7 @@ resource "proxmox_vm_qemu" "vm" {
   clone       = each.value.clone
   name        = each.value.name
   desc        = each.value.desc
+  tags        = each.value.tags
   agent       = each.value.agent
 
   disks {
@@ -47,9 +48,9 @@ resource "proxmox_vm_qemu" "vm" {
     id = 0
   }
 
-  vga {
-    type = "serial0"
-  }
+  # vga {
+  #   type = "serial0"
+  # }
 
   sockets = 1
   cores   = each.value.cores
@@ -98,7 +99,7 @@ resource "proxmox_cloud_init_disk" "ci" {
   user_data = local_file.cloud_init_user_data_file[each.key].content
 
   meta_data = yamlencode({
-    instance_id    = sha1(each.value.name)
-    local-hostname = "${each.value.name}"
+    instance_id = sha1(each.value.name)
+    # local-hostname = "${each.value.name}"
   })
 }

@@ -1,24 +1,25 @@
-# Download Archlinux cloud image
+# Download openSUSE MicroOS cloud image
+cloud-init is supported only in openstack image
 ```
 mkdir -p /var/lib/vz/template/qcow
 wget -P /var/lib/vz/template/qcow \
-https://mirroronet.pl/pub/mirrors/archlinux/images/latest/Arch-Linux-x86_64-cloudimg.qcow2
+https://download.opensuse.org/tumbleweed/appliances/openSUSE-MicroOS.x86_64-OpenStack-Cloud.qcow2
 ```
 
 # Create a VM template
-Set VM variables for latter use:
+## 1. Set VM variables for latter use:
 ```
 export VM_ID=9000 \
-export VM_NAME="demeter" \
-export VM_IMAGE=/var/lib/vz/template/qcow/Arch-Linux-x86_64-cloudimg.qcow2 \
+export VM_NAME="microos" \
+export VM_IMAGE=/var/lib/vz/template/qcow/openSUSE-MicroOS.x86_64-OpenStack-Cloud.qcow2 \
 export VM_STORAGE="local-lvm"
 ```
 
-Create VM as base for template:
+## 2. Create VM as base for template:
 ```
 qm create "${VM_ID}" \
   --name "${VM_NAME}" \
-  --description "Created on $(date)<br>https://archlinux.org" \
+  --description "Created on $(date)<br>https://opensuse.org" \
   --ostype l26 \
   --agent enabled=1 \
   --bios seabios \
@@ -26,22 +27,22 @@ qm create "${VM_ID}" \
   --scsihw virtio-scsi-pci \
   --cpu cputype=host \
   --memory 512 \
-  --serial0 socket --vga serial0 \
+  --vga qxl \
   --net0 virtio,bridge=vmbr0,tag=10
 ```
 
-# Import the cloud image (it does not work, thats why we use ISO)
+## 3. Import the cloud image (it does not work, thats why we use ISO)
 ```
 qm disk import "${VM_ID}" "${VM_IMAGE}" "${VM_STORAGE}"
 ```
 
-# Attach the disk to the VM and set it as boot
+## 4. Attach the disk to the VM and set it as boot
 ```
 qm set "${VM_ID}" --boot order=scsi0 \
   --scsi0 "${VM_STORAGE}":vm-"${VM_ID}"-disk-0,cache=writeback,discard=on,ssd=1
 ```
 
-# Convert the VM into a template
+## 5. Convert the VM into a template
 ```
 qm template "${VM_ID}"
 ```
