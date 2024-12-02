@@ -10,6 +10,7 @@ resource "proxmox_vm_qemu" "vm" {
   name        = each.value.name
   desc        = each.value.desc
   tags        = each.value.tags
+  onboot      = each.value.onboot
   agent       = each.value.agent
 
   disks {

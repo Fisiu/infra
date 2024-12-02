@@ -10,6 +10,7 @@ variable "vm_configs" {
     name         = string
     desc         = optional(string, "")
     tags         = optional(string, "")
+    onboot       = optional(bool, true)
     cores        = optional(number, 1)
     memory       = optional(number, 1024)
     disk_size    = optional(string, "1G")
