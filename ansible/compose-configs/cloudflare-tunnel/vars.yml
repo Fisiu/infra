@@ -1,0 +1,6 @@
+---
+# vars.yml
+
+cloudflare_tunnel_name: cloudflare-tunnel
+cloudflare_tunnel_token: "{{ vault_cloudflare_tunnel_token }}"
+cloudflare_image: cloudflare/cloudflared:latest

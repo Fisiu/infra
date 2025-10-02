@@ -1,0 +1,27 @@
+---
+# vars.yml
+
+# Docker configuration
+docker_compose_base_dir: "/opt/stacks"
+docker_network_name: "stack_net"
+
+# System configuration
+system_timezone: "Europe/Warsaw"
+
+# Ansible user configuration
+ansible_service_user: "{{ vault_ansible_user }}"
+ansible_service_user_groups:
+  - sudo
+  - docker
+
+# SSH public keys for ansible user
+ansible_ssh_public_keys: "{{ vault_ansible_ssh_public_keys }}"
+
+# System packages
+debian_packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - python3-docker

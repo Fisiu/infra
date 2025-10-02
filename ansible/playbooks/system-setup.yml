@@ -1,0 +1,101 @@
+---
+# system-setup.yml
+
+- name: Setup Debian system for Docker deployments
+  hosts: homelab
+  become: true
+
+  tasks:
+    - name: Set system timezone
+      community.general.timezone:
+        name: "{{ system_timezone }}"
+      tags: [system]
+
+    - name: Create ansible service user
+      ansible.builtin.user:
+        name: "{{ ansible_service_user }}"
+        groups: "{{ ansible_service_user_groups }}"
+        shell: /bin/bash
+        create_home: yes
+        state: present
+      tags: [user]
+
+    - name: Set up authorized keys for ansible user
+      ansible.posix.authorized_key:
+        user: "{{ ansible_service_user }}"
+        key: "{{ item }}"
+        state: present
+      loop: "{{ ansible_ssh_public_keys }}"
+      tags: [user]
+
+    - name: Allow ansible user to have passwordless sudo
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers.d/ansible
+        line: "{{ ansible_service_user }} ALL=(ALL) NOPASSWD: ALL"
+        state: present
+        mode: "0440"
+        create: yes
+        validate: "visudo -cf %s"
+      tags: [user]
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required system packages
+      ansible.builtin.apt:
+        name: "{{ debian_packages }}"
+        state: present
+
+    - name: Create directory for Docker GPG key
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Download Docker GPG key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/debian/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "0644"
+
+    - name: Add Docker repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+        state: present
+        filename: docker
+
+    - name: Install Docker
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+        update_cache: yes
+
+    - name: Ensure Docker service is running
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Ensure ansible user is in docker group (refresh)
+      ansible.builtin.user:
+        name: "{{ ansible_service_user }}"
+        groups: "{{ ansible_service_user_groups }}"
+        append: yes
+
+    - name: Create base directory for docker-compose projects
+      ansible.builtin.file:
+        path: "{{ docker_compose_base_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Create Docker network for inter-container communication
+      community.docker.docker_network:
+        name: "{{ docker_network_name }}"
+        state: present

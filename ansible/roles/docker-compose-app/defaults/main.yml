@@ -1,0 +1,7 @@
+---
+# main.yml
+
+app_name: "default-app"
+compose_template: "{{ app_name }}/compose.yml.j2"
+app_state: present # present or absent
+restart_policy: unless-stopped

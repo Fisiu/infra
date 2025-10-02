@@ -1,0 +1,11 @@
+---
+# site.yml
+
+- name: Import system setup playbook
+  ansible.builtin.import_playbook: system-setup.yml
+
+- name: Deploy Cloudflare Tunnel
+  ansible.builtin.import_playbook: deploy-cloudflare-tunnel.yml
+
+- name: Deploy Traefik Reverse Proxy
+  ansible.builtin.import_playbook: deploy-traefik.yml

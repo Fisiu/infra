@@ -1,0 +1,10 @@
+---
+# services.yml
+
+http:
+  services:
+    # luci on nanopi
+    nanopi-luci:
+      loadBalancer:
+        servers:
+          - url: http://{{ vault_app_nanopi_ip }}:80

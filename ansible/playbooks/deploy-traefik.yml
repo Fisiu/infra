@@ -1,0 +1,20 @@
+---
+# deploy-traefik.yml
+
+- name: Deploy Traefik Reverse Proxy
+  hosts: homelab
+  become: true
+
+  vars_files:
+    - ../compose-configs/traefik/vars.yml
+
+  roles:
+    - role: docker-compose-app
+      vars:
+        app_name: traefik
+        env_template: .env.j2
+        config_templates:
+          - traefik.yml.j2
+          - dynamic/middlewares.yml.j2
+          - dynamic/routers.yml.j2
+          - dynamic/services.yml.j2

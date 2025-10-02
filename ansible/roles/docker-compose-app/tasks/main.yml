@@ -1,0 +1,76 @@
+---
+# main.yml
+
+- name: Create application directory
+  ansible.builtin.file:
+    path: "{{ docker_compose_base_dir }}/{{ app_name }}"
+    state: directory
+    mode: "0755"
+  when: app_state == 'present'
+
+- name: Deploy additional config files
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../compose-configs/{{ app_name }}/"
+    dest: "{{ docker_compose_base_dir }}/{{ app_name }}/"
+    mode: preserve
+    recursive: true
+  when:
+    - app_state == 'present'
+    - deploy_config_files | default(false)
+
+- name: Create directories for template files
+  ansible.builtin.file:
+    path: "{{ docker_compose_base_dir }}/{{ app_name }}/{{ item | dirname }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ config_templates | default([]) }}"
+  when:
+    - app_state == 'present'
+    - item | dirname != ''
+
+- name: Deploy template files
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/../compose-configs/{{ app_name }}/{{ item }}"
+    dest: "{{ docker_compose_base_dir }}/{{ app_name }}/{{ item | regex_replace('\\.j2$', '') }}"
+    mode: "0644"
+  loop: "{{ config_templates | default([]) }}"
+  when: app_state == 'present'
+
+- name: Deploy environment file if defined
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/../compose-configs/{{ app_name }}/{{ env_template }}"
+    dest: "{{ docker_compose_base_dir }}/{{ app_name }}/.env"
+    mode: "0640"
+    owner: root
+    group: docker
+  when:
+    - app_state == 'present'
+    - env_template is defined
+  no_log: true
+
+- name: Deploy compose file
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/../compose-configs/{{ compose_template }}"
+    dest: "{{ docker_compose_base_dir }}/{{ app_name }}/compose.yml"
+    mode: "0644"
+  when: app_state == 'present'
+  register: compose_file
+
+- name: Deploy application with Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ docker_compose_base_dir }}/{{ app_name }}"
+    state: present
+    pull: always
+  when: app_state == 'present'
+
+- name: Remove application
+  community.docker.docker_compose_v2:
+    project_src: "{{ docker_compose_base_dir }}/{{ app_name }}"
+    state: absent
+  when: app_state == 'absent'
+
+- name: Remove application directory
+  ansible.builtin.file:
+    path: "{{ docker_compose_base_dir }}/{{ app_name }}"
+    state: absent
+  when: app_state == 'absent'

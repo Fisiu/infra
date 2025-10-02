@@ -1,0 +1,16 @@
+---
+# vars.yml
+
+traefik_image: traefik:v3
+traefik_container_name: traefik
+traefik_http_port: 80
+traefik_https_port: 443
+traefik_dashboard_port: 8080
+traefik_log_level: DEBUG
+traefik_dashboard_host: "{{ vault_traefik_dashboard_host }}"
+cloudflare_api_email: "{{ vault_cloudflare_api_email }}"
+cloudflare_dns_api_token: "{{ vault_cloudflare_dns_api_token }}"
+cloudflare_zone_api_token: "{{ vault_cloudflare_zone_api_token }}"
+
+# Trusted IP ranges (local networks)
+trusted_ip_ranges: "{{ vault_trusted_ip_ranges }}"

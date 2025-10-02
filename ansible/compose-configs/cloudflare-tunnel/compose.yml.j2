@@ -1,0 +1,17 @@
+---
+# compose.yml
+
+services:
+  cloudflared:
+    image: {{ cloudflare_image }}
+    container_name: {{ cloudflare_tunnel_name }}
+    restart: {{ restart_policy }}
+    command: tunnel --no-autoupdate run
+    environment:
+      - TZ={{ system_timezone }}
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+
+networks:
+  default:
+    name: {{ docker_network_name }}
+    external: true

@@ -1,0 +1,104 @@
+# Ansible vault password file
+ansible/.vault_pass
+ansible/.vault_password
+ansible/vault_pass.txt
+
+# Encrypted vault files (optional - some prefer to commit encrypted vaults)
+ansible/**/vault.yml
+ansible/**/vault.yaml
+
+# Ansible retry files
+ansible/*.retry
+
+# Ansible log files
+*.log
+ansible.log
+
+# Ansible Galaxy collections (can be reinstalled)
+ansible/collections/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+
+# SSH keys (if accidentally placed in project)
+*.pem
+*.key
+id_rsa*
+*.ppk
+
+# Local testing/development
+.vagrant/
+*.box
+.molecule/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+# Local inventory overrides (if you use them)
+ansible/inventory/hosts.local.yml
+ansible/inventory/local/
+
+# Environment-specific files
+.env
+.env.local
+.env.*.local
+
+# Certificate files
+*.crt
+*.pem
+*.cert
+*.cer
+*.p12
+*.pfx
+
+# Documentation build artifacts
+docs/_build/
+
+# Terraform/OpenTofu files
+terraform/**/*.tfstate
+terraform/**/*.tfstate.*
+terraform/**/.terraform/
+terraform/**/.terraform.lock.hcl
+terraform/**/crash.log
+terraform/**/crash.*.log
+terraform/**/*.tfvars
+terraform/**/*.tfvars.json
+terraform/**/override.tf
+terraform/**/override.tf.json
+terraform/**/*_override.tf
+terraform/**/*_override.tf.json
+terraform/**/.terraformrc
+terraform/**/terraform.rc
+terraform/**/*.tfplan
+
+# Custom local scripts
+local_*.sh
+test_*.sh

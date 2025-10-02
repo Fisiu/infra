@@ -1,0 +1,13 @@
+---
+# middlewares.yml
+
+http:
+  middlewares:
+    # IP whitelist for trusted networks
+    lan-only:
+      ipWhiteList:
+        sourceRange:
+          - "127.0.0.1/32"
+{% for ip in trusted_ip_ranges %}
+          - "{{ ip }}"
+{% endfor %}
