@@ -30,7 +30,7 @@ providers:
     exposedByDefault: false
     network: {{ docker_network_name }}
   file:
-    directory: /etc/traefik
+    directory: /etc/traefik/dynamic
     watch: true
 
 certificatesResolvers:

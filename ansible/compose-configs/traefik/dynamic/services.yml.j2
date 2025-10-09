@@ -7,4 +7,14 @@ http:
     nanopi-luci:
       loadBalancer:
         servers:
-          - url: http://{{ vault_app_nanopi_ip }}:80
+          - url: {{ vault_app_nanopi_url }}
+    # dsm on ds224
+    ds224:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_ds224_url }}
+    # dsm on ds216
+    ds216:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_ds216_url }}
