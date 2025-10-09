@@ -13,6 +13,16 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_ds224_url }}
+    # calibre-web on ds224
+    ds224-calibre:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_calibre_url }}
+    # kosync on ds224
+    ds224-kosync:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_kosync_url }}
     # dsm on ds216
     ds216:
       loadBalancer:

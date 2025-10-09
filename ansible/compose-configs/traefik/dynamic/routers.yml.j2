@@ -29,6 +29,32 @@ http:
         domains:
           - main: "{{ vault_traefik_domain }}"
             sans: "*.{{ vault_traefik_domain }}"
+    # dsm-calibre on ds224
+    ds224-calibre:
+      rule: "Host(`calibre.{{ vault_traefik_domain }}`)"
+      service: ds224-calibre
+      entryPoints:
+        - websecure
+      middlewares:
+        # - lan-only@file
+      tls:
+        certResolver: production
+        domains:
+          - main: "{{ vault_traefik_domain }}"
+            sans: "*.{{ vault_traefik_domain }}"
+    # kosync on ds224
+    ds224-kosync:
+      rule: "Host(`kosync.{{ vault_traefik_domain }}`)"
+      service: ds224-kosync
+      entryPoints:
+        - websecure
+      middlewares:
+        # - lan-only@file
+      tls:
+        certResolver: production
+        domains:
+          - main: "{{ vault_traefik_domain }}"
+            sans: "*.{{ vault_traefik_domain }}"
     # dsm on ds216
     ds216:
       rule: "Host(`ds216.{{ vault_traefik_domain }}`)"
