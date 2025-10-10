@@ -55,6 +55,19 @@ http:
         domains:
           - main: "{{ vault_traefik_domain }}"
             sans: "*.{{ vault_traefik_domain }}"
+    # jellyfin on ds224
+    ds224-jellyfin:
+      rule: "Host(`jellyfin.{{ vault_traefik_domain }}`)"
+      service: ds224-jellyfin
+      entryPoints:
+        - websecure
+      middlewares:
+        - lan-only@file
+      tls:
+        certResolver: production
+        domains:
+          - main: "{{ vault_traefik_domain }}"
+            sans: "*.{{ vault_traefik_domain }}"
     # dsm on ds216
     ds216:
       rule: "Host(`ds216.{{ vault_traefik_domain }}`)"
