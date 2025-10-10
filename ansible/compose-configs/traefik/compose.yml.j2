@@ -28,10 +28,29 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.dashboard.rule=Host(`{{ traefik_dashboard_host }}`)"
       - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
       - "traefik.http.routers.dashboard.tls.certresolver=production"
       - "traefik.http.routers.dashboard.tls.domains[0].main={{ vault_traefik_domain }}"
       - "traefik.http.routers.dashboard.tls.domains[0].sans=*.{{ vault_traefik_domain }}"
       - "traefik.http.routers.dashboard.middlewares=lan-only@file"
+    depends_on:
+      error-pages: {condition: service_healthy}
+
+  error-pages:
+    image: {{ error_pages_image }}
+    container_name: {{ error_pages_container_name }}
+    restart: {{ restart_policy }}
+    security_opt:
+      - no-new-privileges
+    environment:
+      - TEMPLATE_NAME={{ error_pages_template }}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.error-pages.loadbalancer.server.port=8080"
+      - "traefik.http.routers.error-pages.rule=HostRegexp(`.+`)"
+      - "traefik.http.routers.error-pages.priority=10"
+      - "traefik.http.routers.error-pages.entrypoints=websecure"
+      - "traefik.http.routers.error-pages.tls.certresolver=production"
 
 networks:
   default:

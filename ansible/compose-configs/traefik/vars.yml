@@ -14,3 +14,8 @@ cloudflare_zone_api_token: "{{ vault_cloudflare_zone_api_token }}"
 
 # Trusted IP ranges (local networks)
 trusted_ip_ranges: "{{ vault_trusted_ip_ranges }}"
+
+# error-pages
+error_pages_image: ghcr.io/tarampampam/error-pages:3
+error_pages_container_name: error-pages
+error_pages_template: ghost # set the error pages template
