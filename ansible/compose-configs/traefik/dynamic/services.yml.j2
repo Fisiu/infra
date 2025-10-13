@@ -28,6 +28,11 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_joplin_url }}
+    # navidrome on ds224
+    ds224-navidrome:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_navidrome_url }}
     # dsm on ds216
     ds216:
       loadBalancer:

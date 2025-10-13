@@ -66,6 +66,17 @@ http:
         domains:
           - main: "{{ vault_traefik_domain }}"
             sans: "*.{{ vault_traefik_domain }}"
+    # navidrome on ds224
+    ds224-navidrome:
+      rule: "Host(`music.{{ vault_traefik_domain }}`) || Host(`navidrome.{{ vault_traefik_domain }}`)"
+      service: ds224-navidrome
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: production
+        domains:
+          - main: "{{ vault_traefik_domain }}"
+            sans: "*.{{ vault_traefik_domain }}"
     # dsm on ds216
     ds216:
       rule: "Host(`ds216.{{ vault_traefik_domain }}`)"
