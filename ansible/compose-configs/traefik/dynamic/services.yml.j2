@@ -3,11 +3,6 @@
 
 http:
   services:
-    # luci on nanopi
-    nanopi-luci:
-      loadBalancer:
-        servers:
-          - url: {{ vault_app_nanopi_url }}
     # dsm on ds224
     ds224:
       loadBalancer:

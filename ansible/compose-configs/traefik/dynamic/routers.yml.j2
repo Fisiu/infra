@@ -3,19 +3,6 @@
 
 http:
   routers:
-    # luci on nanopi
-    nanopi-luci:
-      rule: "Host(`nanopi.{{ vault_traefik_domain }}`)"
-      service: nanopi-luci
-      entryPoints:
-        - websecure
-      middlewares:
-        - lan-only@file
-      tls:
-        certResolver: production
-        domains:
-          - main: "{{ vault_traefik_domain }}"
-            sans: "*.{{ vault_traefik_domain }}"
     # dsm on ds224
     ds224:
       rule: "Host(`nas.{{ vault_traefik_domain }}`) || Host(`ds224.{{ vault_traefik_domain }}`)"
