@@ -55,6 +55,17 @@ http:
         domains:
           - main: "{{ vault_traefik_domain }}"
             sans: "*.{{ vault_traefik_domain }}"
+    # joplin on ds224
+    ds224-joplin:
+      rule: "Host(`joplin.{{ vault_traefik_domain }}`)"
+      service: ds224-joplin
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: production
+        domains:
+          - main: "{{ vault_traefik_domain }}"
+            sans: "*.{{ vault_traefik_domain }}"
     # dsm on ds216
     ds216:
       rule: "Host(`ds216.{{ vault_traefik_domain }}`)"

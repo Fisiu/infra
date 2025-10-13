@@ -23,6 +23,11 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_jellyfin_url }}
+    # joplin on ds224
+    ds224-joplin:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_joplin_url }}
     # dsm on ds216
     ds216:
       loadBalancer:
