@@ -33,6 +33,11 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_navidrome_url }}
+    # paperless on ds224
+    ds224-paperless:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_paperless_url }}
     # dsm on ds216
     ds216:
       loadBalancer:
