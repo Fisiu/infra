@@ -38,6 +38,11 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_paperless_url }}
+    # radio on ds224
+    ds224-radio:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_radio_url }}
     # dsm on ds216
     ds216:
       loadBalancer:
