@@ -1,0 +1,23 @@
+---
+# vars.yml
+
+gluetun_name: "gluetun"
+gluetun_image: "qmcgaw/gluetun:latest"
+gluetun_api_port: "8000"
+gluetun_proxy_port: "8888"
+gluetun_socks_port: "8388"
+gluetun_vpn_type: "wireguard"
+gluetun_http_proxy: "on"
+gluetun_http_proxy_log: "on"
+gluetun_http_proxy_stealth: "on"
+gluetun_shadowsocks: "off"
+gluetun_shadowsocks_log: "off"
+
+qbittorrent_name: "qbittorrent"
+qbittorrent_image: "lscr.io/linuxserver/qbittorrent:libtorrentv1"
+qbittorrent_webui_port: "8090"
+qbittorrent_webui_password: "{{ vault_app_qbittorrent_webui_password }}"
+qbittorrent_input_port: "37881"
+qbittorrent_puid: "1027"
+qbittorrent_pgid: "100"
+qbittorrent_umask: "000"

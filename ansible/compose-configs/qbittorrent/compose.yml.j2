@@ -1,0 +1,80 @@
+---
+# compose.yml
+
+services:
+  {{ gluetun_name }}:
+    image: {{ gluetun_image }}
+    container_name: {{ gluetun_name }}
+    restart: {{ restart_policy }}
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - "{{ gluetun_api_port }}:8000/tcp" # gluetun API
+      - "{{ gluetun_proxy_port }}:8888/tcp" # HTTP proxy
+      - "{{ gluetun_socks_port }}:8388/tcp" # Shadowsocks
+      - "{{ gluetun_socks_port }}:8388/udp" # Shadowsocks
+      - "{{ qbittorrent_webui_port }}:8090/tcp" # port for qbittorrent webui
+      - "{{ qbittorrent_input_port }}:${FIREWALL_INPUT_PORTS:?missing-port}/tcp"
+      - "{{ qbittorrent_input_port }}:${FIREWALL_INPUT_PORTS:?missing-port}/udp"
+    volumes:
+      - ./gluetun:/gluetun
+    environment:
+      - TZ={{ system_timezone }}
+      - VPN_SERVICE_PROVIDER={{ vault_app_qbittorrent_vpn_provider }}
+      - VPN_TYPE={{ gluetun_vpn_type }}
+      - WIREGUARD_PRIVATE_KEY=${PRIVATE_KEY}
+      - WIREGUARD_ADDRESSES=${IP_ADDRESS}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
+      - SERVER_REGIONS=${SERVER_REGIONS}
+      - SERVER_CITIES=${SERVER_CITIES}
+      - SERVER_HOSTNAMES=${SERVER_HOSTNAMES}
+      - HTTPPROXY={{ gluetun_http_proxy }}
+      - HTTPPROXY_LOG={{ gluetun_http_proxy_log }}
+      - HTTPPROXY_USER=${HTTPPROXY_USER}
+      - HTTPPROXY_PASSWORD=${HTTPPROXY_PASSWORD}
+      - HTTPPROXY_STEALTH={{ gluetun_http_proxy_stealth }}
+      - SHADOWSOCKS={{ gluetun_shadowsocks }}
+      - SHADOWSOCKS_LOG={{ gluetun_shadowsocks_log }}
+      - SHADOWSOCKS_PASSWORD=${SHADOWSOCKS_PASSWORD}
+      - FIREWALL_VPN_INPUT_PORTS=${FIREWALL_VPN_INPUT_PORTS:-}
+      - FIREWALL_INPUT_PORTS=${FIREWALL_INPUT_PORTS:-}
+      - FIREWALL_OUTBOUND_SUBNETS=${FIREWALL_OUTBOUND_SUBNETS:-}
+
+  {{ qbittorrent_name }}:
+    image: {{ qbittorrent_image }}
+    container_name: {{ qbittorrent_name }}
+    restart: {{ restart_policy }}
+    network_mode: "service:{{ gluetun_name }}"
+    environment:
+      - TZ={{ system_timezone }}
+      - PUID={{ qbittorrent_puid }}
+      - PGID={{ qbittorrent_pgid }}
+      - UMASK_SET={{ qbittorrent_umask }}
+      - WEBUI_PORT=8090
+    volumes:
+      - ./config:/config # config for qbittorrent
+      - ./themes:/themes:ro # themes
+      - nfs:{{ vault_app_qbittorrent_nfs_mount_point }}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.qbittorrent.loadbalancer.server.port=8090"
+      - "traefik.http.routers.qbittorrent.rule=Host(`torrent.{{ vault_traefik_domain }}`)"
+      - "traefik.http.routers.qbittorrent.entrypoints=websecure"
+      - "traefik.http.routers.qbittorrent.tls.certresolver=production"
+      - "traefik.http.routers.qbittorrent.tls.domains[0].main={{ vault_traefik_domain }}"
+      - "traefik.http.routers.qbittorrent.tls.domains[0].sans=*.{{ vault_traefik_domain }}"
+      - "traefik.http.routers.qbittorrent.middlewares=lan-only@file"
+
+volumes:
+  nfs:
+    driver_opts:
+      type: "nfs"
+      o: "{{ vault_app_qbittorrent_nfs_options }}"
+      device: "{{ vault_app_qbittorrent_nfs_device }}"
+
+networks:
+  default:
+    name: "{{ docker_network_name }}"
+    external: true
