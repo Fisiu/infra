@@ -25,3 +25,4 @@ debian_packages:
   - gnupg
   - lsb-release
   - python3-docker
+  - unzip
