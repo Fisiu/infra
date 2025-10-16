@@ -7,11 +7,11 @@ http:
     ds224:
       rule: "Host(`nas.{{ vault_traefik_domain }}`) || Host(`ds224.{{ vault_traefik_domain }}`)"
       service: ds224
-      entryPoints:
+      entryPoints: &https
         - websecure
       middlewares:
         - lan-only@file
-      tls:
+      tls: &{{ vault_traefik_domain }}-tls
         certResolver: production
         domains:
           - main: "{{ vault_traefik_domain }}"
@@ -20,76 +20,46 @@ http:
     ds224-calibre:
       rule: "Host(`calibre.{{ vault_traefik_domain }}`)"
       service: ds224-calibre
-      entryPoints:
-        - websecure
+      entryPoints: *https
       middlewares:
         # - lan-only@file
-      tls:
-        certResolver: production
-        domains:
-          - main: "{{ vault_traefik_domain }}"
-            sans: "*.{{ vault_traefik_domain }}"
+      tls: *{{ vault_traefik_domain }}-tls
     # kosync on ds224
     ds224-kosync:
       rule: "Host(`kosync.{{ vault_traefik_domain }}`)"
       service: ds224-kosync
-      entryPoints:
-        - websecure
+      entryPoints: *https
       middlewares:
         # - lan-only@file
-      tls:
-        certResolver: production
-        domains:
-          - main: "{{ vault_traefik_domain }}"
-            sans: "*.{{ vault_traefik_domain }}"
+      tls: *{{ vault_traefik_domain }}-tls
     # jellyfin on ds224
     ds224-jellyfin:
       rule: "Host(`jellyfin.{{ vault_traefik_domain }}`)"
       service: ds224-jellyfin
-      entryPoints:
-        - websecure
+      entryPoints: *https
       middlewares:
         - lan-only@file
-      tls:
-        certResolver: production
-        domains:
-          - main: "{{ vault_traefik_domain }}"
-            sans: "*.{{ vault_traefik_domain }}"
+      tls: *{{ vault_traefik_domain }}-tls
     # joplin on ds224
     ds224-joplin:
       rule: "Host(`joplin.{{ vault_traefik_domain }}`)"
       service: ds224-joplin
-      entryPoints:
-        - websecure
-      tls:
-        certResolver: production
-        domains:
-          - main: "{{ vault_traefik_domain }}"
-            sans: "*.{{ vault_traefik_domain }}"
+      entryPoints: *https
+      tls: *{{ vault_traefik_domain }}-tls
     # navidrome on ds224
     ds224-navidrome:
       rule: "Host(`music.{{ vault_traefik_domain }}`) || Host(`navidrome.{{ vault_traefik_domain }}`)"
       service: ds224-navidrome
-      entryPoints:
-        - websecure
-      tls:
-        certResolver: production
-        domains:
-          - main: "{{ vault_traefik_domain }}"
-            sans: "*.{{ vault_traefik_domain }}"
+      entryPoints: *https
+      tls: *{{ vault_traefik_domain }}-tls
     # paperless-ngx on ds224
     ds224-paperless:
       rule: "Host(`paperless.{{ vault_traefik_domain }}`) || Host(`paperless-ngx.{{ vault_traefik_domain }}`)"
       service: ds224-paperless
       middlewares:
         - lan-only@file
-      entryPoints:
-        - websecure
-      tls:
-        certResolver: production
-        domains:
-          - main: "{{ vault_traefik_domain }}"
-            sans: "*.{{ vault_traefik_domain }}"
+      entryPoints: *https
+      tls: *{{ vault_traefik_domain }}-tls
     # radio on ds224
     ds224-radio:
       rule: "Host(`radio.{{ vault_traefik_domain }}`)"
@@ -97,23 +67,13 @@ http:
       # add auth middleware in the future
       middlewares:
         - lan-only@file
-      entryPoints:
-        - websecure
-      tls:
-        certResolver: production
-        domains:
-          - main: "{{ vault_traefik_domain }}"
-            sans: "*.{{ vault_traefik_domain }}"
+      entryPoints: *https
+      tls: *{{ vault_traefik_domain }}-tls
     # dsm on ds216
     ds216:
       rule: "Host(`ds216.{{ vault_traefik_domain }}`)"
       service: ds216
-      entryPoints:
-        - websecure
+      entryPoints: *https
       middlewares:
         - lan-only@file
-      tls:
-        certResolver: production
-        domains:
-          - main: "{{ vault_traefik_domain }}"
-            sans: "*.{{ vault_traefik_domain }}"
+      tls: *{{ vault_traefik_domain }}-tls
