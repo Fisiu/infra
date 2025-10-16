@@ -9,3 +9,6 @@
 
 - name: Deploy Traefik Reverse Proxy
   ansible.builtin.import_playbook: deploy-traefik.yml
+
+- name: Deploy qBittorrent with VPN
+  ansible.builtin.import_playbook: deploy-qbittorrent.yml
