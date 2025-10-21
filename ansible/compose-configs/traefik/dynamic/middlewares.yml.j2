@@ -12,7 +12,7 @@ http:
         query: "/{status}.html"
     # IP whitelist for trusted networks
     lan-only:
-      ipWhiteList:
+      ipAllowList:
         sourceRange:
           - "127.0.0.1/32"
 {% for ip in trusted_ip_ranges %}
