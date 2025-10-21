@@ -48,3 +48,8 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_ds216_url }}
+    # proxmox on firebat
+    proxmox:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_proxmox_url }}
