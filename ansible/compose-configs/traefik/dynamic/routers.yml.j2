@@ -11,7 +11,7 @@ http:
         - websecure
       middlewares:
         - lan-only@file
-      tls: &{{ vault_traefik_domain }}-tls
+      tls: &tls
         certResolver: production
         domains:
           - main: "{{ vault_traefik_domain }}"
@@ -23,7 +23,7 @@ http:
       entryPoints: *https
       middlewares:
         # - lan-only@file
-      tls: *{{ vault_traefik_domain }}-tls
+      tls: *tls
     # kosync on ds224
     ds224-kosync:
       rule: "Host(`kosync.{{ vault_traefik_domain }}`)"
@@ -31,7 +31,7 @@ http:
       entryPoints: *https
       middlewares:
         # - lan-only@file
-      tls: *{{ vault_traefik_domain }}-tls
+      tls: *tls
     # jellyfin on ds224
     ds224-jellyfin:
       rule: "Host(`jellyfin.{{ vault_traefik_domain }}`)"
@@ -39,19 +39,19 @@ http:
       entryPoints: *https
       middlewares:
         - lan-only@file
-      tls: *{{ vault_traefik_domain }}-tls
+      tls: *tls
     # joplin on ds224
     ds224-joplin:
       rule: "Host(`joplin.{{ vault_traefik_domain }}`)"
       service: ds224-joplin
       entryPoints: *https
-      tls: *{{ vault_traefik_domain }}-tls
+      tls: *tls
     # navidrome on ds224
     ds224-navidrome:
       rule: "Host(`music.{{ vault_traefik_domain }}`) || Host(`navidrome.{{ vault_traefik_domain }}`)"
       service: ds224-navidrome
       entryPoints: *https
-      tls: *{{ vault_traefik_domain }}-tls
+      tls: *tls
     # paperless-ngx on ds224
     ds224-paperless:
       rule: "Host(`paperless.{{ vault_traefik_domain }}`) || Host(`paperless-ngx.{{ vault_traefik_domain }}`)"
@@ -59,7 +59,7 @@ http:
       middlewares:
         - lan-only@file
       entryPoints: *https
-      tls: *{{ vault_traefik_domain }}-tls
+      tls: *tls
     # radio on ds224
     ds224-radio:
       rule: "Host(`radio.{{ vault_traefik_domain }}`)"
@@ -68,7 +68,7 @@ http:
       middlewares:
         - lan-only@file
       entryPoints: *https
-      tls: *{{ vault_traefik_domain }}-tls
+      tls: *tls
     # dsm on ds216
     ds216:
       rule: "Host(`ds216.{{ vault_traefik_domain }}`)"
@@ -76,4 +76,4 @@ http:
       entryPoints: *https
       middlewares:
         - lan-only@file
-      tls: *{{ vault_traefik_domain }}-tls
+      tls: *tls
