@@ -77,3 +77,11 @@ http:
       middlewares:
         - lan-only@file
       tls: *tls
+    # proxmox on firebat
+    proxmox:
+      rule: "Host(`proxmox.{{ vault_traefik_domain }}`)"
+      service: proxmox
+      entryPoints: *https
+      middlewares:
+        - lan-only@file
+      tls: *tls
