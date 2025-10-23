@@ -1,0 +1,15 @@
+---
+# vars.yml
+
+# Tweak ssh
+ansible_ssh_pipelining: true
+
+# Packages to exclude from upgrade
+opkg_upgrade_ignore: "kernel"
+
+# Reboot only if these packages are upgraded
+critical_packages: "kernel"
+
+# Backup config before upgrade?
+backup_config: true
+backup_path: /tmp/backup-{{ inventory_hostname }}.tar.gz
