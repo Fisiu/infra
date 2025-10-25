@@ -64,6 +64,14 @@ http:
       service: ds224-joplin
       entryPoints: *https
       tls: *tls
+    # audiobookshelf on ds224
+    ds224-audiobookshelf:
+      rule: "Host(`audiobooks.{{ vault_traefik_domain }}`)"
+      service: ds224-audiobookshelf
+      entryPoints: *https
+      middlewares:
+        - lan-only@file
+      tls: *tls
     # navidrome on ds224
     ds224-navidrome:
       rule: "Host(`music.{{ vault_traefik_domain }}`) || Host(`navidrome.{{ vault_traefik_domain }}`)"
