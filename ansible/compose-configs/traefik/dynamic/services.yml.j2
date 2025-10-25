@@ -8,6 +8,26 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_ds224_url }}
+    # garage s3 on ds224
+    ds224-s3:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_s3_url }}
+        healthcheck:
+          path: "/health"
+          port: "3903"
+          # interval: "10s"
+          # timeout: "3s"
+    # garage webui on ds224
+    ds224-garage:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_garage_url }}
+        healthcheck:
+          path: "/health"
+          port: "3903"
+          # interval: "10s"
+          # timeout: "3s"
     # calibre-web on ds224
     ds224-calibre:
       loadBalancer:

@@ -16,6 +16,24 @@ http:
         domains:
           - main: "{{ vault_traefik_domain }}"
             sans: "*.{{ vault_traefik_domain }}"
+    # garage s3 on ds224
+    ds224-s3:
+      rule: "Host(`s3.{{ vault_traefik_domain }}`)"
+      service: ds224-s3
+      entryPoints: *https
+      middlewares:
+        - lan-only@file
+        - compression@file
+      tls: *tls
+    # garage webui on ds224
+    ds224-garage:
+      rule: "Host(`garage.{{ vault_traefik_domain }}`)"
+      service: ds224-garage
+      entryPoints: *https
+      middlewares:
+        - lan-only@file
+        - compression@file
+      tls: *tls
     # dsm-calibre on ds224
     ds224-calibre:
       rule: "Host(`calibre.{{ vault_traefik_domain }}`)"

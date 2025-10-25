@@ -3,6 +3,10 @@
 
 http:
   middlewares:
+    # compression
+    compression:
+      compress:
+        encodings: "br, gzip"
     # Error pages middleware
     error-pages:
       errors:
