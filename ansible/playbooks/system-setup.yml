@@ -11,6 +11,20 @@
         name: "{{ system_timezone }}"
       tags: [system]
 
+    - name: Disable IPv6 on the host
+      ansible.builtin.sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+        sysctl_set: yes
+        reload: yes
+        sysctl_file: "/etc/sysctl.d/99-local.conf"
+      loop:
+        - { name: "net.ipv6.conf.all.disable_ipv6", value: "1" }
+        - { name: "net.ipv6.conf.default.disable_ipv6", value: "1" }
+      notify: Restart Docker
+      tags: [system]
+
     - name: Create ansible service user
       ansible.builtin.user:
         name: "{{ ansible_service_user }}"
@@ -99,3 +113,9 @@
       community.docker.docker_network:
         name: "{{ docker_network_name }}"
         state: present
+
+  handlers:
+    - name: Restart Docker
+      ansible.builtin.systemd:
+        name: docker
+        state: restarted
