@@ -1,0 +1,6 @@
+---
+# vars.yml
+
+gotify_name: "gotify"
+gotify_image: "gotify/server:2"
+gotify_webui_port: "8020"

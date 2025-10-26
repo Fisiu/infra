@@ -1,0 +1,30 @@
+---
+# compose.yml
+
+services:
+  {{ gotify_name }}:
+    image: {{ gotify_image }}
+    container_name: {{ gotify_name }}
+    restart: {{ restart_policy }}
+    ports:
+      - "{{ gotify_webui_port }}:80"
+    volumes:
+      - './data:/app/data'
+    environment:
+      - TZ={{ system_timezone }}
+      - GOTIFY_DEFAULTUSER_NAME=${GOTIFY_DEFAULTUSER_NAME}
+      - GOTIFY_DEFAULTUSER_PASS=${GOTIFY_DEFAULTUSER_PASS}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.{{ gotify_name }}.loadbalancer.server.port=80"
+      - "traefik.http.routers.{{ gotify_name }}.rule=Host(`gotify.{{ vault_traefik_domain }}`)"
+      - "traefik.http.routers.{{ gotify_name }}.entrypoints=websecure"
+      - "traefik.http.routers.{{ gotify_name }}.tls.certresolver=production"
+      - "traefik.http.routers.{{ gotify_name }}.tls.domains[0].main={{ vault_traefik_domain }}"
+      - "traefik.http.routers.{{ gotify_name }}.tls.domains[0].sans=*.{{ vault_traefik_domain }}"
+      # - "traefik.http.routers.{{ gotify_name }}.middlewares=lan-only@file"
+
+networks:
+  default:
+    name: {{ docker_network_name }}
+    external: true
