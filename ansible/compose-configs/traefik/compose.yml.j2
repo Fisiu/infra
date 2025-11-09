@@ -32,7 +32,7 @@ services:
       - "traefik.http.routers.dashboard.tls.certresolver=production"
       - "traefik.http.routers.dashboard.tls.domains[0].main={{ vault_traefik_domain }}"
       - "traefik.http.routers.dashboard.tls.domains[0].sans=*.{{ vault_traefik_domain }}"
-      - "traefik.http.routers.dashboard.middlewares=lan-only@file"
+      - "traefik.http.routers.dashboard.middlewares=lan-only@file,error-pages@file"
     depends_on:
       error-pages: {condition: service_healthy}
 
