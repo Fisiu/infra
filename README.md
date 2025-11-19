@@ -26,7 +26,7 @@ touch terraform/.gitkeep
 
 # 2. Install Ansible collections
 cd ansible
-ansible-galaxy collection install -r requirements.yml
+ansible-galaxy install -r requirements.yml
 
 # 3. Create vault password file
 echo "your-vault-password" > ansible/.vault_pass
