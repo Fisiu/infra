@@ -3,7 +3,7 @@
 
 - name: Update and upgrade OpenWrt packages
   hosts: openwrt
-  gather_facts: no
+  gather_facts: false
   serial: 1
 
   tasks:
@@ -15,7 +15,7 @@
       ansible.builtin.raw: opkg update
       register: opkg_update
       changed_when: true
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: List upgradable packages (excluding ignored)
       ansible.builtin.raw: >
@@ -38,7 +38,7 @@
         fi
       async: 45
       poll: 0
-      ignore_errors: yes
+      ignore_errors: true
       when: upgrade_result.changed | default(false)
 
     - name: Wait for router to come back
