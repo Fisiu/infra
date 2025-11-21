@@ -1,0 +1,8 @@
+---
+# main.yml
+
+# https://gweb-coral-full.uc.r.appspot.com/docs/m2/get-started/
+# defaults file for coral_edgetpu
+
+coral_edgetpu_packages:
+  - libedgetpu1-std

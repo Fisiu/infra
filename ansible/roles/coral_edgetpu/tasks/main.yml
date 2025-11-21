@@ -1,0 +1,38 @@
+---
+# main.yml
+
+# https://gweb-coral-full.uc.r.appspot.com/docs/m2/get-started/
+
+- name: Create directory for Google GPG key
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Download Google Coral GPG key
+  ansible.builtin.get_url:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    dest: /etc/apt/keyrings/google-coral.asc
+    mode: "0644"
+
+- name: Add Google Coral Edge TPU repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/google-coral.asc] https://packages.cloud.google.com/apt coral-edgetpu-stable main"
+    state: present
+    filename: google-coral
+
+# Seems gasket-dkms from Google repository is not compatible with newer kernel, use working version
+# https://github.com/google/gasket-driver/pull/50
+# https://github.com/feranick/gasket-driver/releases/download/1.0-18.4/gasket-dkms_1.0-18.4_all.deb
+
+- name: Install gasket-dkms deb package from GitHub releases
+  ansible.builtin.apt:
+    deb: https://github.com/feranick/gasket-driver/releases/download/1.0-18.4/gasket-dkms_1.0-18.4_all.deb
+    state: present
+  notify: "Reload gasket and apex modules"
+
+- name: Install Coral Edge TPU packages
+  ansible.builtin.apt:
+    name: "{{ coral_edgetpu_packages }}"
+    state: present
+    update_cache: yes

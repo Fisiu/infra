@@ -1,0 +1,16 @@
+---
+# main.yml
+
+# handlers file for coral_edgetpu
+
+- name: Load gasket kernel module
+  community.general.modprobe:
+    name: gasket
+    state: present
+  listen: "Reload gasket and apex modules"
+
+- name: Load apex kernel module
+  community.general.modprobe:
+    name: apex
+    state: present
+  listen: "Reload gasket and apex modules"

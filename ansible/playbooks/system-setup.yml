@@ -62,6 +62,10 @@
         name: "{{ debian_packages }}"
         state: present
 
+    - name: Run Coral Edge TPU setup role
+      ansible.builtin.include_role:
+        name: coral_edgetpu
+
     - name: Create directory for Docker GPG key
       ansible.builtin.file:
         path: /etc/apt/keyrings
