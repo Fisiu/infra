@@ -12,6 +12,10 @@ cloudflare_api_email: "{{ vault_cloudflare_api_email }}"
 cloudflare_dns_api_token: "{{ vault_cloudflare_dns_api_token }}"
 cloudflare_zone_api_token: "{{ vault_cloudflare_zone_api_token }}"
 
+traefik_extra_hosts:
+  ds224: "{{ vault_ds224_ip }}"
+  ds216: "{{ vault_ds216_ip }}"
+
 # Trusted IP ranges (local networks)
 trusted_ip_ranges: "{{ vault_trusted_ip_ranges }}"
 

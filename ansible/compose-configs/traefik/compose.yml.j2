@@ -14,6 +14,9 @@ services:
       - "{{ traefik_dashboard_port }}:8080"
     extra_hosts:
       - host.docker.internal:host-gateway
+{% for hostname, ip in traefik_extra_hosts.items() %}
+      - "{{ hostname }}:{{ ip }}"
+{% endfor %}
     environment:
       - CF_API_EMAIL=${CF_API_EMAIL}
       - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
