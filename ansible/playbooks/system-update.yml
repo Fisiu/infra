@@ -1,0 +1,33 @@
+---
+# system-update.yml
+
+- name: Perform routine system updates
+  hosts: homelab
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Perform system upgrade
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+      register: apt_upgrade_result # Register the result to check for changes (in the future)
+
+    - name: Display upgrade results
+      ansible.builtin.debug:
+        var: apt_upgrade_result.stdout_lines
+      when: apt_upgrade_result.changed
+
+    - name: Check if reboot is required
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required_file
+
+    - name: Reboot if required and packages were changed
+      ansible.builtin.reboot:
+        reboot_timeout: 600 # Wait up to 10 minutes for the host to reboot
+      when: reboot_required_file.stat.exists
