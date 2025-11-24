@@ -1,0 +1,52 @@
+---
+# compose.yml
+
+services:
+  {{ frigate_name }}:
+    image: {{ frigate_image }}
+    container_name: {{ frigate_name }}
+    restart: {{ restart_policy }}
+    privileged: true # intel_gpu_top needs this
+    stop_grace_period: 30s # allow enough time to shut down the various services
+    shm_size: {{ frigate_shm_size }}
+    devices:
+      - /dev/apex_0:/dev/apex_0 # Passes a PCIe Coral
+      - /dev/dri/renderD128:/dev/dri/renderD128 # For intel hwaccel
+    ports:
+      - "{{ frigate_webui_port }}:8971"
+      - "{{ frigate_rtsp_port }}:8554" # RTSP feeds
+      - "{{ frigate_webrtc_port }}:8555/tcp" # WebRTC over tcp
+      - "{{ frigate_webrtc_port }}:8555/udp" # WebRTC over udp
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./config:/config
+      # - ./frigate.yml:/config/config.yaml
+      - nfs:/media/frigate
+      - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
+        target: /tmp/cache
+        tmpfs:
+          size: 1000000000
+    environment:
+      - TZ={{ system_timezone }}
+      - FRIGATE_RTSP_PASSWORD=${FRIGATE_RTSP_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.{{ frigate_name }}.loadbalancer.server.port=8971"
+      - "traefik.http.routers.{{ frigate_name }}.rule=Host(`frigate.{{ vault_traefik_domain }}`)"
+      - "traefik.http.routers.{{ frigate_name }}.entrypoints=websecure"
+      - "traefik.http.routers.{{ frigate_name }}.tls.certresolver=production"
+      - "traefik.http.routers.{{ frigate_name }}.tls.domains[0].main={{ vault_traefik_domain }}"
+      - "traefik.http.routers.{{ frigate_name }}.tls.domains[0].sans=*.{{ vault_traefik_domain }}"
+      - "traefik.http.routers.{{ frigate_name }}.middlewares=lan-only@file"
+
+volumes:
+  nfs:
+    driver_opts:
+      type: "nfs"
+      o: "{{ vault_app_frigate_nfs_options }}"
+      device: "{{ vault_app_frigate_nfs_device }}"
+
+networks:
+  default:
+    name: {{ docker_network_name }}
+    external: true

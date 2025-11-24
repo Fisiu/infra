@@ -1,0 +1,9 @@
+---
+# vars.yml
+
+frigate_name: "frigate"
+frigate_image: "ghcr.io/blakeblackshear/frigate:stable"
+frigate_shm_size: "384mb"
+frigate_webui_port: "8971"
+frigate_rtsp_port: "8554"
+frigate_webrtc_port: "8555"
