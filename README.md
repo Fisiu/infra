@@ -8,12 +8,18 @@ Ansible and Terraform/OpenTofu configurations for homelab infrastructure managem
 .
 ├── ansible/
 │   ├── ansible.cfg
-│   ├── requirements.yml
+│   ├── compose-configs/
 │   ├── inventory/
 │   ├── playbooks/
-│   ├── roles/
-│   └── compose-configs/
+│   ├── requirements.yml
+│   └── roles/
 └── terraform/
+    ├── REAME.md
+    ├── main.tf
+    ├── modules/
+    ├── outputs.tf
+    ├── providers.tf
+    └── variables.tf
 ```
 
 ## Setup
@@ -21,8 +27,8 @@ Ansible and Terraform/OpenTofu configurations for homelab infrastructure managem
 ```bash
 # 1. Create directory structure
 mkdir -p ansible/{inventory/group_vars/all,playbooks,roles/docker-compose-app/{tasks,templates,defaults},compose-configs/cloudflare-tunnel}
-mkdir -p terraform
-touch terraform/.gitkeep
+mkdir -p opentofu
+curl -s https://www.toptal.com/developers/gitignore/api/terraform > terraform/.gitignore
 
 # 2. Install Ansible collections
 cd ansible
@@ -74,4 +80,47 @@ ansible-playbook playbooks/site.yml --limit debian-server
 # From project root:
 ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml
 ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml --syntax-check
+```
+
+## Terraform/OpenTofu Usage
+
+OpenTofu is used to provision and manage infrastructure components such as virtual machines and LXC containers. The configuration is modularized for reusability.
+
+### Setup and Deployment
+
+1.  **Initialize OpenTofu**: Navigate to the `terraform/` directory and initialize the backend and modules.
+    ```bash
+    cd terraform
+    tofu init
+    ```
+2.  **Review Plan**: Generate an execution plan to see what actions OpenTofu will perform.
+    ```bash
+    tofu plan
+    ```
+3.  **Apply Changes**: Apply the planned changes to create or update infrastructure.
+    ```bash
+    tofu apply
+    ```
+
+### Modules
+
+The `opentofu/modules/` directory contains reusable OpenTofu configurations:
+
+*   `lxc/`: Configuration for deploying LXC containers.
+*   `nas-s3/`: Configuration for network-attached storage or S3-compatible storage setup.
+*   `vm/`: Configuration for provisioning virtual machines, including cloud-init user data.
+
+### Variables
+
+Sensitive variables or environment-specific configurations should be managed in `terraform/terraform.tfvars` (which is gitignored) or passed via environment variables.
+
+### Useful OpenTofu Commands
+
+```bash
+# From opentofu directory:
+tofu fmt                      # Format OpenTofu configuration files
+tofu validate                 # Validate the configuration files
+tofu destroy                  # Destroy the managed infrastructure (use with caution!)
+tofu show                     # Show the current state or a plan file
+tofu graph                    # Generate a visual graph of the OpenTofu configuration
 ```
