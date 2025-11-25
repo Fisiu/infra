@@ -15,24 +15,24 @@ variable "pm_tls_insecure" {
   default = true
 }
 
-# Proxmox VM configs
+# Proxmox VM/LXC configs
 variable "target_node" {
   type = string
 }
 variable "vm_configs" {
   description = "List of VM configurations"
 }
-
-# Minio S3 access
-variable "minio_s3_endpoint" {}
-variable "minio_s3_api_key" {
-  sensitive = true
-}
-variable "minio_s3_secret_key" {
-  sensitive = true
+variable "lxc_configs" {
+  description = "List of LXC configurations"
 }
 
-# Minio S3
-variable "buckets" {
+# Garage S3 access
+variable "s3_endpoint" {}
+variable "s3_admin_token" {
+  sensitive = true
+}
+
+# S3
+variable "s3_buckets" {
   description = "List of S3 buckets"
 }

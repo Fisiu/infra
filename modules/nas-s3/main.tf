@@ -1,6 +1,13 @@
-resource "aws_s3_bucket" "s3" {
+resource "garage_bucket" "s3" {
   for_each = toset(concat(var.buckets, ["opentofu"]))
 
-  bucket        = each.value
-  force_destroy = true
+  global_alias = each.value
+}
+
+terraform {
+  required_providers {
+    garage = {
+      source = "registry.terraform.io/jkossis/garage"
+    }
+  }
 }
