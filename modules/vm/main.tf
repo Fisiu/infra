@@ -1,5 +1,5 @@
 resource "proxmox_vm_qemu" "vm" {
-  for_each = { for id, config in var.vm_configs : id => config }
+  for_each = { for cfg in var.vm_configs : cfg.name => cfg }
 
   depends_on = [
     proxmox_cloud_init_disk.ci
@@ -8,10 +8,11 @@ resource "proxmox_vm_qemu" "vm" {
   target_node = var.target_node
   clone       = each.value.clone
   name        = each.value.name
-  desc        = each.value.desc
+  description = each.value.description
   tags        = each.value.tags
   onboot      = each.value.onboot
   agent       = each.value.agent
+  vmid        = coalesce(each.value.vmid, 200 + index(var.vm_configs, each.value))
 
   disks {
     scsi {
@@ -25,7 +26,7 @@ resource "proxmox_vm_qemu" "vm" {
       }
     }
     ide {
-      ide2 {
+      ide1 {
         cdrom {
           iso = proxmox_cloud_init_disk.ci[each.key].id
         }
@@ -37,6 +38,7 @@ resource "proxmox_vm_qemu" "vm" {
     for_each = each.value.networks
 
     content {
+      id       = network.key
       model    = "virtio"
       bridge   = network.value.bridge
       tag      = network.value.vlan
@@ -49,15 +51,13 @@ resource "proxmox_vm_qemu" "vm" {
     id = 0
   }
 
-  # vga {
-  #   type = "serial0"
-  # }
-
-  sockets = 1
-  cores   = each.value.cores
-  memory  = each.value.memory
-  scsihw  = "virtio-scsi-single"
-  boot    = "order=scsi0"
+  cpu {
+    sockets = 1
+    cores   = each.value.cores
+  }
+  memory = each.value.memory
+  scsihw = "virtio-scsi-single"
+  boot   = "order=scsi0"
 
   os_type = "cloud-init"
   lifecycle {
@@ -70,14 +70,13 @@ resource "proxmox_vm_qemu" "vm" {
 terraform {
   required_providers {
     proxmox = {
-      source  = "telmate/proxmox"
-      version = ">= 3.0"
+      source = "telmate/proxmox"
     }
   }
 }
 
 resource "local_file" "cloud_init_user_data_file" {
-  for_each = { for id, config in var.vm_configs : id => config }
+  for_each = { for cfg in var.vm_configs : cfg.name => cfg }
 
   content = templatefile("${path.module}/userdata.tftpl", {
     hostname = each.value.name
@@ -90,7 +89,7 @@ resource "local_file" "cloud_init_user_data_file" {
 }
 
 resource "proxmox_cloud_init_disk" "ci" {
-  for_each = { for id, config in var.vm_configs : id => config }
+  for_each = { for cfg in var.vm_configs : cfg.name => cfg }
 
   name     = each.value.name
   pve_node = var.target_node

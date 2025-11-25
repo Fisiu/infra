@@ -8,7 +8,7 @@ variable "vm_configs" {
   type = list(object({
     clone        = string
     name         = string
-    desc         = optional(string, "")
+    description  = optional(string, "")
     tags         = optional(string, "")
     onboot       = optional(bool, true)
     cores        = optional(number, 1)
@@ -19,6 +19,7 @@ variable "vm_configs" {
     ssh_pub_keys = list(string)
     packages     = optional(list(string), [])
     commands     = optional(list(string), [])
+    vmid         = optional(number)
     networks = list(object({
       bridge   = optional(string, "vmbr0")
       vlan     = optional(string, "")
@@ -26,4 +27,9 @@ variable "vm_configs" {
       mac      = optional(string)
     }))
   }))
+
+  validation {
+    condition     = length(distinct([for v in var.vm_configs : v.name])) == length(var.vm_configs)
+    error_message = "Each element in var.vm_configs must have a unique 'name' field."
+  }
 }

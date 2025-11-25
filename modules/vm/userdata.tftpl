@@ -29,8 +29,10 @@ write_files:
       net.ipv6.conf.default.disable_ipv6=1
 
 runcmd:
-  - /usr/bin/localectl set-keymap pl
-  - [ transactional-update, -n, pkg, in, qemu-guest-agent%{ for package in packages ~}, ${package}%{ endfor ~} ]
+  - [ apt, -y, -qq, update ]
+  - [ apt, -y, -qq, install, qemu-guest-agent%{ for package in packages ~}, ${package}%{ endfor ~} ]
+  - [ curl, -fsSL, https://get.docker.com, -o, get-docker.sh ]
+  - [ sh, get-docker.sh ]
 
 ntp:
   enabled: true
