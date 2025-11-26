@@ -40,8 +40,11 @@ resource "proxmox_lxc" "lxc" {
 
   nameserver = each.value.nameserver
 
-  cores  = each.value.cores
-  memory = each.value.memory
+  cores    = each.value.cores
+  cpulimit = each.value.cpulimit
+  cpuunits = each.value.cpuunits
+  memory   = each.value.memory
+  swap     = each.value.swap
 
   password        = each.value.password
   ssh_public_keys = join("\n", each.value.ssh_public_keys)

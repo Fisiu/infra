@@ -14,7 +14,10 @@ variable "lxc_configs" {
     tags            = optional(string, "")
     onboot          = optional(bool, true)
     cores           = optional(number, 1)
+    cpulimit        = optional(number, 0.0)
+    cpuunits        = optional(number, 100)
     memory          = optional(number, 1024)
+    swap            = optional(number, 512)
     disk_size       = optional(string, "1G")
     storage         = optional(string, "local-lvm")
     password        = string
