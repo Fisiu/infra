@@ -1,0 +1,18 @@
+---
+# main.yml
+
+# Default variables for prometheus_pve_exporter role
+
+pve_exporter_version: "latest"
+pve_exporter_user: pve-exporter
+pve_exporter_group: pve-exporter
+pve_exporter_install_dir: /opt/pve-exporter
+pve_exporter_config_dir: /etc/pve-exporter
+pve_exporter_listen_port: 9221
+pve_exporter_verify_ssl: false
+
+# Credentials (override in vault)
+pve_exporter_proxmox_user: ""
+pve_exporter_proxmox_password: ""
+pve_exporter_proxmox_token_id: ""
+pve_exporter_proxmox_token_secret: ""

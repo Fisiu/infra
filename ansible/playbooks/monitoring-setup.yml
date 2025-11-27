@@ -1,0 +1,25 @@
+---
+# monitoring-setup.yml
+
+- name: Setup monitoring stack with Prometheus and Grafana
+  hosts: monitoring
+  become: true
+
+  tasks:
+    - name: Install Prometheus
+      ansible.builtin.include_role:
+        name: prometheus.prometheus.prometheus
+      tags: [monitoring, prometheus]
+      when: inventory_hostname == 'prometheus'
+
+    - name: Install Grafana
+      ansible.builtin.include_role:
+        name: grafana.grafana.grafana
+      tags: [monitoring, grafana]
+      when: inventory_hostname == 'grafana'
+
+    - name: Install PVE exporter
+      ansible.builtin.include_role:
+        name: pve_exporter
+      tags: [monitoring, pve-exporter]
+      when: inventory_hostname == 'prometheus-pve-exporter'

@@ -1,0 +1,10 @@
+default:
+{% if pve_exporter_proxmox_token_id %}
+  user: {{ pve_exporter_proxmox_token_id.split('!')[0] }}
+  token_name: {{ pve_exporter_proxmox_token_id.split('!')[-1] }}
+  token_value: {{ pve_exporter_proxmox_token_secret }}
+{% else %}
+  user: {{ pve_exporter_proxmox_user }}
+  password: {{ pve_exporter_proxmox_password }}
+{% endif %}
+  verify_ssl: {{ pve_exporter_verify_ssl | lower }}

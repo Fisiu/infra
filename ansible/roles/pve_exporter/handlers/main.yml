@@ -1,0 +1,10 @@
+---
+# main.yml
+
+# Handlers for pve_exporter role
+
+- name: Restart pve-exporter
+  ansible.builtin.systemd:
+    name: pve-exporter
+    state: restarted
+    daemon_reload: true

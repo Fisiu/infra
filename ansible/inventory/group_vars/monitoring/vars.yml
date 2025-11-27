@@ -1,0 +1,32 @@
+---
+# vars.yml
+
+# Grafana configuration
+grafana_ini:
+  security:
+    admin_user: "{{ vault_grafana_admin_user }}"
+    admin_password: "{{ vault_grafana_admin_password }}"
+
+# Prometheus data source for Grafana
+grafana_datasources:
+  - name: Prometheus
+    type: prometheus
+    url: "{{ vault_prometheus_url }}"
+    access: proxy
+    is_default: true
+
+# Prometheus scrape configs
+prometheus_scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+  - job_name: "proxmox"
+    metrics_path: "/pve"
+    static_configs:
+      - targets: ["{{ vault_prometheus_pve_exporter_host_port }}"] # pve_exporter scraped by Prometheus
+    params:
+      target: ["{{ vault_prometheus_pve_exporter_target }}"] # proxmox passed to exporter
+
+# PVE exporter config (use token for security)
+pve_exporter_proxmox_token_id: "{{ vault_prometheus_pve_exporter_proxmox_token_id }}"
+pve_exporter_proxmox_token_secret: "{{ vault_prometheus_pve_exporter_proxmox_token_secret }}"
