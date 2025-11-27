@@ -56,7 +56,8 @@ resource "proxmox_lxc" "lxc" {
 
   lifecycle {
     ignore_changes = [
-      network # Prevent Terraform from detecting changes in the network configuration
+      network,    # Prevent Terraform from detecting changes in the network configuration
+      description # Prevent Terraform from detecting changes in the description
     ]
   }
 }
