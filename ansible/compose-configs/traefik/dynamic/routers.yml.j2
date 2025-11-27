@@ -111,3 +111,11 @@ http:
       middlewares:
         - lan-only@file
       tls: *tls
+    # grafana on proxmox
+    proxmox-grafana:
+      rule: "Host(`grafana.{{ vault_traefik_domain }}`)"
+      service: proxmox-grafana
+      entryPoints: *https
+      middlewares:
+        - lan-only@file
+      tls: *tls
