@@ -12,7 +12,6 @@ system_timezone: "Europe/Warsaw"
 ansible_service_user: "{{ vault_ansible_user }}"
 ansible_service_user_groups:
   - sudo
-  - docker
 
 # SSH public keys for ansible user
 ansible_ssh_public_keys: "{{ vault_ansible_ssh_public_keys }}"
@@ -25,4 +24,9 @@ debian_packages:
   - gnupg
   - lsb-release
   - python3-docker
+  - sudo
   - unzip
+
+# Groups/hosts that should run docker-related tasks
+docker_enabled_groups: ["homelab"]
+coral_edgetpu_host: minipc

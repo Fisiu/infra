@@ -2,22 +2,29 @@
 # system-setup.yml
 
 - name: Setup Debian system for Docker deployments
-  hosts: homelab
+  hosts: linux
   become: true
 
   tasks:
+    - name: Set fact for Docker-enabled hosts
+      ansible.builtin.set_fact:
+        is_docker_enabled_host: >-
+          {{ docker_enabled_groups is defined and
+             (docker_enabled_groups | intersect(group_names) | length > 0) }}
+      tags: [always]
+
     - name: Set system timezone
       community.general.timezone:
         name: "{{ system_timezone }}"
       tags: [system]
 
     - name: Disable IPv6 on the host
-      ansible.builtin.sysctl:
+      ansible.posix.sysctl:
         name: "{{ item.name }}"
         value: "{{ item.value }}"
         state: present
-        sysctl_set: yes
-        reload: yes
+        sysctl_set: true
+        reload: true
         sysctl_file: "/etc/sysctl.d/99-local.conf"
       loop:
         - { name: "net.ipv6.conf.all.disable_ipv6", value: "1" }
@@ -25,12 +32,24 @@
       notify: Restart Docker
       tags: [system]
 
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+      tags: [system]
+
+    - name: Install required system packages
+      ansible.builtin.apt:
+        name: "{{ debian_packages }}"
+        state: present
+      tags: [system]
+
     - name: Create ansible service user
       ansible.builtin.user:
         name: "{{ ansible_service_user }}"
         groups: "{{ ansible_service_user_groups }}"
         shell: /bin/bash
-        create_home: yes
+        create_home: true
         state: present
       tags: [user]
 
@@ -48,41 +67,39 @@
         line: "{{ ansible_service_user }} ALL=(ALL) NOPASSWD: ALL"
         state: present
         mode: "0440"
-        create: yes
+        create: true
         validate: "visudo -cf %s"
       tags: [user]
-
-    - name: Update apt cache
-      ansible.builtin.apt:
-        update_cache: yes
-        cache_valid_time: 3600
-
-    - name: Install required system packages
-      ansible.builtin.apt:
-        name: "{{ debian_packages }}"
-        state: present
 
     - name: Run Coral Edge TPU setup role
       ansible.builtin.include_role:
         name: coral_edgetpu
+      tags: [edgetpu]
+      when: inventory_hostname == coral_edgetpu_host
 
     - name: Create directory for Docker GPG key
       ansible.builtin.file:
         path: /etc/apt/keyrings
         state: directory
         mode: "0755"
+      tags: [docker]
+      when: is_docker_enabled_host
 
     - name: Download Docker GPG key
       ansible.builtin.get_url:
         url: https://download.docker.com/linux/debian/gpg
         dest: /etc/apt/keyrings/docker.asc
         mode: "0644"
+      tags: [docker]
+      when: is_docker_enabled_host
 
     - name: Add Docker repository
       ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian {{ ansible_facts.distribution_release }} stable"
         state: present
         filename: docker
+      tags: [docker]
+      when: is_docker_enabled_host
 
     - name: Install Docker
       ansible.builtin.apt:
@@ -93,33 +110,44 @@
           - docker-buildx-plugin
           - docker-compose-plugin
         state: present
-        update_cache: yes
+        update_cache: true
+      tags: [docker]
+      when: is_docker_enabled_host
 
     - name: Ensure Docker service is running
       ansible.builtin.systemd:
         name: docker
         state: started
-        enabled: yes
+        enabled: true
+      tags: [docker]
+      when: is_docker_enabled_host
 
     - name: Ensure ansible user is in docker group (refresh)
       ansible.builtin.user:
         name: "{{ ansible_service_user }}"
         groups: "{{ ansible_service_user_groups }}"
-        append: yes
+        append: true
+      tags: [docker]
+      when: is_docker_enabled_host
 
     - name: Create base directory for docker-compose projects
       ansible.builtin.file:
         path: "{{ docker_compose_base_dir }}"
         state: directory
         mode: "0755"
+      tags: [docker]
+      when: is_docker_enabled_host
 
     - name: Create Docker network for inter-container communication
       community.docker.docker_network:
         name: "{{ docker_network_name }}"
         state: present
+      tags: [docker]
+      when: is_docker_enabled_host
 
   handlers:
     - name: Restart Docker
       ansible.builtin.systemd:
         name: docker
         state: restarted
+      when: is_docker_enabled_host
