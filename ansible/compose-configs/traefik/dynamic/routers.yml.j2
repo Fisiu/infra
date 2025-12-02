@@ -95,6 +95,14 @@ http:
         - lan-only@file
       entryPoints: *https
       tls: *tls
+    # vault on ds224
+    ds224-vault:
+      rule: "Host(`vault.{{ vault_traefik_domain }}`)"
+      service: ds224-vault
+      entryPoints: *https
+      middlewares:
+        - lan-only@file
+      tls: *tls
     # dsm on ds216
     ds216:
       rule: "Host(`ds216.{{ vault_traefik_domain }}`)"
