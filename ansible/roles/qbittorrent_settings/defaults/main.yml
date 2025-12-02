@@ -1,6 +1,6 @@
 ---
 # main.yml
 
-qbittorrent_base_path: "{{ docker_compose_base_dir }}/qbittorrent"
-qbittorrent_config_path: "{{ qbittorrent_base_path }}/config/qBittorrent"
-qbittorrent_themes_path: "{{ qbittorrent_base_path }}/themes"
+qbittorrent_settings_base_path: "{{ docker_compose_base_dir }}/qbittorrent"
+qbittorrent_settings_config_path: "{{ qbittorrent_settings_base_path }}/config/qBittorrent"
+qbittorrent_settings_themes_path: "{{ qbittorrent_settings_base_path }}/themes"

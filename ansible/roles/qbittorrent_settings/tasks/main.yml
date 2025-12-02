@@ -3,15 +3,15 @@
 
 - name: Ensure Docker Compose project is started to generate config if missing
   community.docker.docker_compose_v2:
-    project_src: "{{ qbittorrent_base_path }}"
+    project_src: "{{ qbittorrent_settings_base_path }}"
     state: present
     pull: always
     wait: true
-  register: compose_start
+  register: qbittorrent_settings_compose_start
 
 - name: Wait for qBittorrent to initialize config
   ansible.builtin.wait_for:
-    path: "{{ qbittorrent_config_path }}/qBittorrent.conf"
+    path: "{{ qbittorrent_settings_config_path }}/qBittorrent.conf"
     state: present
     timeout: 60
   ignore_errors: "{{ ansible_check_mode }}" # Proceed if already exists
@@ -19,22 +19,23 @@
 # TODO: check if really need to stop container first
 - name: Stop the qBittorrent container for safe editing
   community.docker.docker_compose_v2:
-    project_src: "{{ qbittorrent_base_path }}"
+    project_src: "{{ qbittorrent_settings_base_path }}"
     services: "{{ qbittorrent_name }}"
     state: stopped
     wait: true
+  register: qbittorrent_settings_compose_stop
 
 - name: Check if WebUI\\Password_PBKDF2 line exists
   ansible.builtin.lineinfile:
-    path: "{{ qbittorrent_config_path }}/qBittorrent.conf"
+    path: "{{ qbittorrent_settings_config_path }}/qBittorrent.conf"
     regexp: 'WebUI\\Password_PBKDF2'  # Escape backslash
     state: absent  # Search mode: No insertion, just detect
-  register: key_check
+  register: qbittorrent_settings_key_check
   check_mode: true  # Detection only
   changed_when: false
 
 - name: Generate qBittorrent-compatible PBKDF2 hash (heredoc for newlines)
-  when: key_check.found == 0
+  when: qbittorrent_settings_key_check.found == 0
   block:
     - name: Generate qBittorrent-compatible PBKDF2 hash (stdlib hashlib, no passlib)
       ansible.builtin.shell: |
@@ -48,22 +49,22 @@
         dk_b64 = base64.b64encode(dk).decode('utf-8')
         print('@ByteArray(' + salt_b64 + ':' + dk_b64 + ')')
         PY
-      register: pbkdf2_gen
+      register: qbittorrent_settings_pbkdf2_gen
       changed_when: false
       no_log: true  # Secure logs
 
     - name: Update WebUI\Password_PBKDF2 in qBittorrent.conf [Preferences] section
-      ansible.builtin.ini_file:
-        path: "{{ qbittorrent_config_path }}/qBittorrent.conf"
+      community.general.ini_file:
+        path: "{{ qbittorrent_settings_config_path }}/qBittorrent.conf"
         section: Preferences
         option: WebUI\Password_PBKDF2
-        value: "{{ pbkdf2_gen.stdout }}"
+        value: "{{ qbittorrent_settings_pbkdf2_gen.stdout }}"
         backup: true
         mode: '0644'
 
 - name: Update WebUI\AlternativeUIEnabled in qBittorrent.conf [Preferences] section
-  ansible.builtin.ini_file:
-    path: "{{ qbittorrent_config_path }}/qBittorrent.conf"
+  community.general.ini_file:
+    path: "{{ qbittorrent_settings_config_path }}/qBittorrent.conf"
     section: Preferences
     option: WebUI\AlternativeUIEnabled
     value: "true"
@@ -71,8 +72,8 @@
     mode: '0644'
 
 - name: Update WebUI\RootFolder in qBittorrent.conf [Preferences] section
-  ansible.builtin.ini_file:
-    path: "{{ qbittorrent_config_path }}/qBittorrent.conf"
+  community.general.ini_file:
+    path: "{{ qbittorrent_settings_config_path }}/qBittorrent.conf"
     section: Preferences
     option: WebUI\RootFolder
     value: "/themes/vuetorrent"
@@ -86,30 +87,30 @@
     status_code: 200
     headers:
       Accept: "application/vnd.github.v3+json"
-  register: response
+  register: qbittorrent_settings_response
   changed_when: false
 
 - name: Set download URL fact
   ansible.builtin.set_fact:
-    vuetorrent_download_url: "{{ (response.json.assets | selectattr('name', 'equalto', 'vuetorrent.zip') | first).browser_download_url }}"
+    qbittorrent_settings_download_url: >
+      {{ (qbittorrent_settings_response.json.assets | selectattr('name', 'equalto', 'vuetorrent.zip') | first).browser_download_url }}
 
 - name: Ensure themes directory exists
   ansible.builtin.file:
-    path: "{{ qbittorrent_themes_path }}"
+    path: "{{ qbittorrent_settings_themes_path }}"
     state: directory
     mode: '0755'
 
 - name: Download and extract VueTorrent theme
   ansible.builtin.unarchive:
-    src: "{{ vuetorrent_download_url }}"
-    dest: "{{ qbittorrent_themes_path }}"
+    src: "{{ qbittorrent_settings_download_url }}"
+    dest: "{{ qbittorrent_settings_themes_path }}"
     remote_src: true
-    creates: "{{ qbittorrent_themes_path }}/vuetorrent"
-  when: vuetorrent_download_url is defined
+  when: qbittorrent_settings_download_url is defined
 
 - name: Ensure qBittorrent container is running
   community.docker.docker_compose_v2:
-    project_src: "{{ qbittorrent_base_path }}"
+    project_src: "{{ qbittorrent_settings_base_path }}"
     services: "{{ qbittorrent_name }}"
     state: present
     wait: true
