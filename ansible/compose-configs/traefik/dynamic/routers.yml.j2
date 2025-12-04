@@ -103,6 +103,14 @@ http:
       middlewares:
         - lan-only@file
       tls: *tls
+    # homarr on ds224
+    ds224-homarr:
+      rule: "Host(`homarr.{{ vault_traefik_domain }}`) || Host(`home.{{ vault_traefik_domain }}`)"
+      service: ds224-homarr
+      entryPoints: *https
+      middlewares:
+        - lan-only@file
+      tls: *tls
     # dsm on ds216
     ds216:
       rule: "Host(`ds216.{{ vault_traefik_domain }}`)"

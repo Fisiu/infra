@@ -73,6 +73,11 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_vault_url }}
+    # homarr on ds224
+    ds224-homarr:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_homarr_url }}
     # dsm on ds216
     ds216:
       loadBalancer:
