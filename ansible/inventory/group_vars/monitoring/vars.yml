@@ -26,6 +26,9 @@ prometheus_scrape_configs:
       - targets: ["{{ vault_prometheus_pve_exporter_host_port }}"] # pve_exporter scraped by Prometheus
     params:
       target: ["{{ vault_prometheus_pve_exporter_target }}"] # proxmox passed to exporter
+  - job_name: "flaresolverr"
+    static_configs:
+      - targets: ["{{ vault_prometheus_flaresolverr_host_port }}"] # flaresolverr scraped by Prometheus
 
 # PVE exporter config (use token for security)
 pve_exporter_proxmox_token_id: "{{ vault_prometheus_pve_exporter_proxmox_token_id }}"
