@@ -9,12 +9,13 @@
   tasks:
     - name: Backup config before upgrade
       ansible.builtin.raw: sysupgrade -b {{ backup_path }}
+      changed_when: false
       when: backup_config | bool
 
     - name: Run opkg update
       ansible.builtin.raw: opkg update
       register: opkg_update
-      changed_when: true
+      changed_when: false
       ignore_errors: true
 
     - name: List upgradable packages (excluding ignored)
@@ -31,15 +32,11 @@
       changed_when: upgrade_result.rc == 0 and 'Upgrading' in upgrade_result.stdout
 
     - name: Reboot if critical package upgraded
-      ansible.builtin.shell: |
-        if echo "{{ upgrade_result.stdout }}" | grep -qE '{{ critical_packages }}'; then
-          echo "Critical package upgraded → rebooting..."
-          reboot
-        fi
-      async: 45
-      poll: 0
-      ignore_errors: true
-      when: upgrade_result.changed | default(false)
+      ansible.builtin.reboot:
+        reboot_timeout: 120
+      when:
+        - upgrade_result.changed | default(false)
+        - upgrade_result.stdout is regex(critical_packages)
 
     - name: Wait for router to come back
       ansible.builtin.wait_for_connection:
