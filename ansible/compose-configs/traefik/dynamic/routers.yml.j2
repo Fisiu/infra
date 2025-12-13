@@ -111,6 +111,14 @@ http:
       middlewares:
         - lan-only@file
       tls: *tls
+    # infisical on ds224
+    ds224-infisical:
+      rule: "Host(`infisical.{{ vault_traefik_domain }}`) || Host(`secrets.{{ vault_traefik_domain }}`)"
+      service: ds224-infisical
+      entryPoints: *https
+      middlewares:
+        - lan-only@file
+      tls: *tls
     # dsm on ds216
     ds216:
       rule: "Host(`ds216.{{ vault_traefik_domain }}`)"

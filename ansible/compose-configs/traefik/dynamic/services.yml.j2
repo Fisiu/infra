@@ -78,6 +78,11 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_homarr_url }}
+    # infisical on ds224
+    ds224-infisical:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_infisical_url }}
     # dsm on ds216
     ds216:
       loadBalancer:
