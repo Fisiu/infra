@@ -16,6 +16,14 @@ http:
         domains:
           - main: "{{ vault_traefik_domain }}"
             sans: "*.{{ vault_traefik_domain }}"
+    # photos on ds224
+    # use the same service but allow world access
+    ds224-dsm:
+      rule: "(Host(`nas.{{ vault_traefik_domain }}`) || Host(`ds224.{{ vault_traefik_domain }}`)) && (PathRegexp(`^/photo/(mo/sharing|synofoto).*$`)) || (PathRegexp(`^/drive/d.*$`)) || (PathPrefix(`/sharing`)) || (PathPrefix(`/webman`)) || (PathPrefix(`/scripts`))"
+      service: ds224
+      entryPoints: *https
+      middlewares: []
+      tls: *tls
     # garage s3 on ds224
     ds224-s3:
       rule: "Host(`s3.{{ vault_traefik_domain }}`)"
