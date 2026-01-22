@@ -1,9 +1,9 @@
 [project]
-name = "ansible"
+name = "homelab"
 version = "0.1.0"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = [
-    "ansible",
-    "ansible-lint",
+    "ansible>=13.2.0",
+    "ansible-lint>=26.1.0",
+    "infisicalsdk>=1.0.15",
 ]
-
