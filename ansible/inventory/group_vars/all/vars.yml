@@ -1,5 +1,12 @@
 ---
-# vars.yml
+# vars.yml - all
+
+## Infisical-stored secrets for monitoring group
+vault_ansible_user: "{{ lookup('infisical', 'vault_ansible_user', path='/all') }}"
+vault_ansible_ssh_public_keys: "{{ lookup('infisical', 'vault_ansible_ssh_public_keys', path='/all') | from_yaml }}"
+
+vault_traefik_domain: "{{ lookup('infisical', 'vault_traefik_domain', path='/all') }}"
+## End
 
 # Docker configuration
 docker_compose_base_dir: "/opt/stacks"

@@ -1,5 +1,10 @@
 ---
-# vars.yml
+# vars.yml - compose-configs/gotify
+
+## Infisical-stored secrets
+vault_app_gotify_user: "{{ lookup('infisical', 'vault_app_gotify_user', path='/apps') }}"
+vault_app_gotify_pass: "{{ lookup('infisical', 'vault_app_gotify_pass', path='/apps') }}"
+## End
 
 gotify_name: "gotify"
 gotify_image: "gotify/server:2"

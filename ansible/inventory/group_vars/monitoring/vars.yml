@@ -1,5 +1,16 @@
 ---
-# vars.yml
+# vars.yml - monitoring
+
+## Infisical-stored secrets for monitoring group
+vault_grafana_admin_user: "{{ lookup('infisical', 'vault_grafana_admin_user', path='/monitoring') }}"
+vault_grafana_admin_password: "{{ lookup('infisical', 'vault_grafana_admin_password', path='/monitoring') }}"
+vault_prometheus_url: "{{ lookup('infisical', 'vault_prometheus_url', path='/monitoring') }}"
+vault_prometheus_pve_exporter_host_port: "{{ lookup('infisical', 'vault_prometheus_pve_exporter_host_port', path='/monitoring') }}"
+vault_prometheus_pve_exporter_target: "{{ lookup('infisical', 'vault_prometheus_pve_exporter_target', path='/monitoring') }}"
+vault_prometheus_flaresolverr_host_port: "{{ lookup('infisical', 'vault_prometheus_flaresolverr_host_port', path='/monitoring') }}"
+vault_prometheus_pve_exporter_proxmox_token_id: "{{ lookup('infisical', 'vault_prometheus_pve_exporter_proxmox_token_id', path='/monitoring') }}"
+vault_prometheus_pve_exporter_proxmox_token_secret: "{{ lookup('infisical', 'vault_prometheus_pve_exporter_proxmox_token_secret', path='/monitoring') }}"
+## End
 
 # Grafana configuration
 grafana_ini:

@@ -1,5 +1,9 @@
 ---
-# vars.yml
+# vars.yml - compose-configs/cloudflare-tunnel
+
+## Infisical-stored secrets
+vault_cloudflare_tunnel_token: "{{ lookup('infisical', 'vault_cloudflare_tunnel_token', path='/all') }}"
+## End
 
 cloudflare_tunnel_name: cloudflare-tunnel
 cloudflare_tunnel_token: "{{ vault_cloudflare_tunnel_token }}"

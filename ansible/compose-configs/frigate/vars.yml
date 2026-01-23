@@ -1,5 +1,11 @@
 ---
-# vars.yml
+# vars.yml - compose-configs/frigate
+
+## Infisical-stored secrets
+vault_app_frigate_rtsp_password: "{{ lookup('infisical', 'vault_app_frigate_rtsp_password', path='/apps') }}"
+vault_app_frigate_nfs_options: "{{ lookup('infisical', 'vault_app_frigate_nfs_options', path='/apps') }}"
+vault_app_frigate_nfs_device: "{{ lookup('infisical', 'vault_app_frigate_nfs_device', path='/apps') }}"
+## End
 
 frigate_name: "frigate"
 frigate_image: "ghcr.io/blakeblackshear/frigate:stable"

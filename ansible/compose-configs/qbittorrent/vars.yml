@@ -1,5 +1,25 @@
 ---
-# vars.yml
+# vars.yml - compose-configs/qbittorrent
+
+## Infisical-stored secrets
+vault_app_qbittorrent_webui_password: "{{ lookup('infisical', 'vault_app_qbittorrent_webui_password', path='/apps') }}"
+vault_app_qbittorrent_vpn_provider: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_provider', path='/apps') }}"
+vault_app_qbittorrent_vpn_private_key: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_private_key', path='/apps') }}"
+vault_app_qbittorrent_vpn_ip_address: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_ip_address', path='/apps') }}"
+vault_app_qbittorrent_vpn_server_countries: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_server_countries', path='/apps') }}"
+vault_app_qbittorrent_vpn_server_regions: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_server_regions', path='/apps') }}"
+vault_app_qbittorrent_vpn_server_cities: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_server_cities', path='/apps') }}"
+vault_app_qbittorrent_vpn_server_hostnames: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_server_hostnames', path='/apps ') }}"
+vault_app_qbittorrent_vpn_http_proxy_user: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_http_proxy_user', path='/apps') }}"
+vault_app_qbittorrent_vpn_http_proxy_password: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_http_proxy_password', path='/apps') }}"
+vault_app_qbittorrent_vpn_shadowsocks_password: "{{ lookup('infisical', 'vault_app_qbittorrent_vpn_shadowsocks_password', path='/apps') }}"
+vault_app_qbittorrent_fw_vpn_ports: "{{ lookup('infisical', 'vault_app_qbittorrent_fw_vpn_ports', path='/apps') }}"
+vault_app_qbittorrent_fw_ports: "{{ lookup('infisical', 'vault_app_qbittorrent_fw_ports', path='/apps') }}"
+vault_app_qbittorrent_fw_subnets: "{{ lookup('infisical', 'vault_app_qbittorrent_fw_subnets', path='/apps') }}"
+vault_app_qbittorrent_nfs_options: "{{ lookup('infisical', 'vault_app_qbittorrent_nfs_options', path='/apps') }}"
+vault_app_qbittorrent_nfs_device: "{{ lookup('infisical', 'vault_app_qbittorrent_nfs_device', path='/apps') }}"
+vault_app_qbittorrent_nfs_mount_point: "{{ lookup('infisical', 'vault_app_qbittorrent_nfs_mount_point', path='/apps') }}"
+## End
 
 gluetun_name: "gluetun"
 gluetun_image: "qmcgaw/gluetun:latest"

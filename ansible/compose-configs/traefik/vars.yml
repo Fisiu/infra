@@ -1,5 +1,37 @@
 ---
-# vars.yml
+# vars.yml - compose-configs/traefik
+
+## Infisical-stored secrets
+vault_trusted_ip_ranges: "{{ lookup('infisical', 'vault_trusted_ip_ranges', path='/all') }}"
+vault_lets_encrypt_email: "{{ lookup('infisical', 'vault_lets_encrypt_email', path='/all') }}"
+vault_traefik_dashboard_host: "{{ lookup('infisical', 'vault_traefik_dashboard_host', path='/all') }}"
+
+vault_ds216_ip: "{{ lookup('infisical', 'vault_ds216_ip', path='/all') }}"
+vault_ds224_ip: "{{ lookup('infisical', 'vault_ds224_ip', path='/all') }}"
+
+vault_cloudflare_api_email: "{{ lookup('infisical', 'vault_cloudflare_api_email', path='/all') }}"
+vault_cloudflare_dns_api_token: "{{ lookup('infisical', 'vault_cloudflare_dns_api_token', path='/all') }}"
+vault_cloudflare_zone_api_token: "{{ lookup('infisical', 'vault_cloudflare_zone_api_token', path='/all') }}"
+
+vault_app_ds216_url: "{{ lookup('infisical', 'vault_app_ds216_url', path='/apps') }}"
+vault_app_ds224_url: "{{ lookup('infisical', 'vault_app_ds224_url', path='/apps') }}"
+
+vault_app_s3_url: "{{ lookup('infisical', 'vault_app_s3_url', path='/apps') }}"
+vault_app_garage_url: "{{ lookup('infisical', 'vault_app_garage_url', path='/apps') }}"
+vault_app_calibre_url: "{{ lookup('infisical', 'vault_app_calibre_url', path='/apps') }}"
+vault_app_kosync_url: "{{ lookup('infisical', 'vault_app_kosync_url', path='/apps') }}"
+vault_app_jellyfin_url: "{{ lookup('infisical', 'vault_app_jellyfin_url', path='/apps') }}"
+vault_app_joplin_url: "{{ lookup('infisical', 'vault_app_joplin_url', path='/apps') }}"
+vault_app_audiobookshelf_url: "{{ lookup('infisical', 'vault_app_audiobookshelf_url', path='/apps') }}"
+vault_app_navidrome_url: "{{ lookup('infisical', 'vault_app_navidrome_url', path='/apps') }}"
+vault_app_paperless_url: "{{ lookup('infisical', 'vault_app_paperless_url', path='/apps') }}"
+vault_app_radio_url: "{{ lookup('infisical', 'vault_app_radio_url', path='/apps') }}"
+vault_app_vault_url: "{{ lookup('infisical', 'vault_app_vault_url', path='/apps') }}"
+vault_app_homarr_url: "{{ lookup('infisical', 'vault_app_homarr_url', path='/apps') }}"
+vault_app_infisical_url: "{{ lookup('infisical', 'vault_app_infisical_url', path='/apps') }}"
+vault_app_proxmox_url: "{{ lookup('infisical', 'vault_app_proxmox_url', path='/apps') }}"
+vault_app_grafana_url: "{{ lookup('infisical', 'vault_app_grafana_url', path='/apps') }}"
+## End
 
 traefik_image: traefik:v3
 traefik_container_name: traefik

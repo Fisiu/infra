@@ -1,5 +1,5 @@
 ---
-# vars.yml
+# vars.yml - openwrt
 
 # Tweak ssh
 ansible_ssh_pipelining: true
