@@ -12,6 +12,7 @@ resource "proxmox_vm_qemu" "vm" {
   tags        = each.value.tags
   onboot      = each.value.onboot
   agent       = each.value.agent
+  skip_ipv6   = each.value.skip_ipv6
   vmid        = coalesce(each.value.vmid, 200 + index(var.vm_configs, each.value))
 
   disks {

@@ -15,6 +15,7 @@ variable "vm_configs" {
     memory       = optional(number, 1024)
     disk_size    = optional(string, "1G")
     agent        = optional(number, 1)
+    skip_ipv6    = optional(bool, true)
     password     = string
     ssh_pub_keys = list(string)
     packages     = optional(list(string), [])
