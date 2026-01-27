@@ -4,6 +4,7 @@ import requests
 import os
 import time
 import threading
+import re
 
 class LookupModule(LookupBase):
     # Class-level caching for shared state across instances
@@ -32,22 +33,64 @@ class LookupModule(LookupBase):
                 raise AnsibleError("Missing Infisical credentials: INFISICAL_CLIENT_ID and INFISICAL_CLIENT_SECRET must be set")
 
             try:
-                auth_response = LookupModule._session.post(
+                response = LookupModule._session.post(
                     f"{infisical_url}/api/v1/auth/universal-auth/login",
                     json={"clientId": client_id, "clientSecret": client_secret},
                     timeout=10
                 )
-                auth_response.raise_for_status()
-                auth_data = auth_response.json()
-                LookupModule._token_cache = auth_data['accessToken']
+                response.raise_for_status()
+                data = response.json()
+                LookupModule._token_cache = data['accessToken']
                 # Refresh 5 minutes before expiry for safety
-                expires_in = auth_data.get('expiresIn', 3600)
+                expires_in = data.get('expiresIn', 3600)
                 LookupModule._token_expiry = time.time() + expires_in - 300
                 return LookupModule._token_cache
             except requests.RequestException as e:
                 raise AnsibleError(f"Failed to authenticate with Infisical: {e}")
             except KeyError:
                 raise AnsibleError("Invalid authentication response from Infisical")
+
+    def _expand_references(self, value, environment, secret_path, max_depth=5):
+        """Recursively expand ${env.path.secret} references in the value"""
+        if not isinstance(value, str) or max_depth <= 0:
+            return value
+        
+        def replace_ref(match):
+            ref = match.group(1)  # e.g., "prod.group.item"
+            parts = ref.split('.')
+            if len(parts) < 3:
+                return match.group(0)  # Invalid format, return unchanged
+            
+            ref_env = parts[0]
+            ref_path = '/' + '.'.join(parts[1:-1])  # e.g., "/all"
+            ref_secret = parts[-1]  # e.g., "item"
+            
+            # Fetch the referenced secret
+            try:
+                response = LookupModule._session.get(
+                    f"{os.getenv('INFISICAL_URL', 'https://app.infisical.com')}/api/v3/secrets/raw/{ref_secret}",
+                    headers={"Authorization": f"Bearer {self._get_token()}"},
+                    params={
+                        "workspaceId": os.getenv('INFISICAL_PROJECT_ID'),
+                        "environment": ref_env,
+                        "secretPath": ref_path
+                    },
+                    timeout=10
+                )
+                response.raise_for_status()
+                data = response.json()
+                secret_value = data.get('secret', {}).get('secretValue')
+                if secret_value is None:
+                    raise AnsibleError(f"Referenced secret '{ref}' not found")
+                return secret_value
+            except requests.RequestException as e:
+                raise AnsibleError(f"Failed to expand reference '{ref}': {e}")
+        
+        # Expand references recursively
+        expanded = re.sub(r'\$\{([^}]+)\}', replace_ref, value)
+        if expanded != value and max_depth > 1:
+            return self._expand_references(expanded, environment, secret_path, max_depth - 1)
+        return expanded
 
     def run(self, terms, variables=None, **kwargs):
         """
@@ -103,6 +146,10 @@ class LookupModule(LookupBase):
                         f"Secret '{secret_name}' not found in environment '{environment}' "
                         f"at path '{secret_path}'"
                     )
+                
+                # Expand any ${} references
+                secret_value = self._expand_references(secret_value, environment, secret_path)
+                
                 LookupModule._secrets_cache[cache_key] = secret_value
                 results.append(secret_value)
             except requests.RequestException as e:
