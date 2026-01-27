@@ -29,6 +29,7 @@ vault_app_radio_url: "{{ lookup('infisical', 'vault_app_radio_url', path='/apps'
 vault_app_vault_url: "{{ lookup('infisical', 'vault_app_vault_url', path='/apps') }}"
 vault_app_homarr_url: "{{ lookup('infisical', 'vault_app_homarr_url', path='/apps') }}"
 vault_app_infisical_url: "{{ lookup('infisical', 'vault_app_infisical_url', path='/apps') }}"
+vault_app_homeassistant_url: "{{ lookup('infisical', 'vault_app_homeassistant_url', path='/apps') }}"
 vault_app_proxmox_url: "{{ lookup('infisical', 'vault_app_proxmox_url', path='/apps') }}"
 vault_app_grafana_url: "{{ lookup('infisical', 'vault_app_grafana_url', path='/apps') }}"
 ## End
@@ -49,7 +50,7 @@ traefik_extra_hosts:
   ds216: "{{ vault_ds216_ip }}"
 
 # Trusted IP ranges (local networks)
-trusted_ip_ranges: "{{ vault_trusted_ip_ranges }}"
+trusted_ip_ranges: "{{ vault_trusted_ip_ranges | from_yaml }}"
 
 # error-pages
 error_pages_image: ghcr.io/tarampampam/error-pages:3

@@ -135,6 +135,12 @@ http:
       middlewares:
         - lan-only@file
       tls: *tls
+    # homeassistant on odroid-m1s
+    m1s-homeassistant:
+      rule: "Host(`ha.{{ vault_traefik_domain }}`)"
+      service: m1s-homeassistant
+      entryPoints: *https
+      tls: *tls
     # proxmox on firebat
     proxmox:
       rule: "Host(`proxmox.{{ vault_traefik_domain }}`)"

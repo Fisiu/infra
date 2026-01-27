@@ -88,6 +88,11 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_ds216_url }}
+    # home assistant on odroid-m1s
+    m1s-homeassistant:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_homeassistant_url }}
     # proxmox on firebat
     proxmox:
       loadBalancer:

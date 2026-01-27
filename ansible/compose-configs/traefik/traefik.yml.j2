@@ -29,6 +29,7 @@ providers:
   docker:
     exposedByDefault: false
     network: {{ docker_network_name }}
+    watch: true
   file:
     directory: /etc/traefik/dynamic
     watch: true
@@ -63,3 +64,5 @@ certificatesResolvers:
 
 serversTransport:
   insecureSkipVerify: true
+
+ping: {}

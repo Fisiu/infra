@@ -8,6 +8,12 @@ services:
     restart: {{ restart_policy }}
     security_opt:
       - no-new-privileges
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     ports:
       - "{{ traefik_http_port }}:80"
       - "{{ traefik_https_port }}:443"
