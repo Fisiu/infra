@@ -5,15 +5,15 @@ resource "proxmox_vm_qemu" "vm" {
     proxmox_cloud_init_disk.ci
   ]
 
-  target_node = var.target_node
-  clone       = each.value.clone
-  name        = each.value.name
-  description = each.value.description
-  tags        = each.value.tags
-  onboot      = each.value.onboot
-  agent       = each.value.agent
-  skip_ipv6   = each.value.skip_ipv6
-  vmid        = coalesce(each.value.vmid, 200 + index(var.vm_configs, each.value))
+  target_node        = var.target_node
+  clone              = each.value.clone
+  name               = each.value.name
+  description        = each.value.description
+  tags               = each.value.tags
+  start_at_node_boot = each.value.onboot
+  agent              = each.value.agent
+  skip_ipv6          = each.value.skip_ipv6
+  vmid               = coalesce(each.value.vmid, 200 + index(var.vm_configs, each.value))
 
   disks {
     scsi {
