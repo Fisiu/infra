@@ -80,11 +80,12 @@ resource "local_file" "cloud_init_user_data_file" {
   for_each = { for cfg in var.vm_configs : cfg.name => cfg }
 
   content = templatefile("${path.module}/userdata.tftpl", {
-    hostname = each.value.name
-    password = each.value.password
-    ssh_keys = each.value.ssh_pub_keys
-    packages = each.value.packages
-    commands = each.value.commands
+    hostname       = each.value.name
+    password       = each.value.password
+    ssh_keys       = each.value.ssh_pub_keys
+    packages       = each.value.packages
+    install_docker = each.value.install_docker
+    commands       = each.value.commands
   })
   filename = "${path.module}/cloud-init/${each.value.name}-user-data"
 }

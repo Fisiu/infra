@@ -4,7 +4,7 @@ disable_root: true
 users:
 - name: core
   primary_group: users
-  groups: users, wheel, docker
+  groups: users, wheel%{ if install_docker }, docker%{ endif }
   no_user_group: true
   plain_text_passwd: ${password}
   shell: /bin/bash
@@ -31,8 +31,10 @@ write_files:
 runcmd:
   - [ apt, -y, -qq, update ]
   - [ apt, -y, -qq, install, qemu-guest-agent%{ for package in packages ~}, ${package}%{ endfor ~} ]
+%{ if install_docker ~}
   - [ curl, -fsSL, https://get.docker.com, -o, get-docker.sh ]
   - [ sh, get-docker.sh ]
+%{endif ~}
 
 ntp:
   enabled: true

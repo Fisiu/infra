@@ -27,7 +27,7 @@ Ansible and Terraform/OpenTofu configurations for homelab infrastructure managem
 ```bash
 # 1. Create directory structure
 mkdir -p ansible/{inventory/group_vars/all,playbooks,roles/docker-compose-app/{tasks,templates,defaults},compose-configs/cloudflare-tunnel}
-mkdir -p opentofu
+mkdir -p terraform
 curl -s https://www.toptal.com/developers/gitignore/api/terraform > terraform/.gitignore
 
 # 2. Install Ansible collections
