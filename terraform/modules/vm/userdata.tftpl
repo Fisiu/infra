@@ -10,15 +10,15 @@ users:
   shell: /bin/bash
   sudo: ALL=(ALL) NOPASSWD:ALL
   ssh_authorized_keys:
-  %{ for key in ssh_keys ~}
-- ${key}
-  %{ endfor ~}
+%{ for key in ssh_keys ~}
+    - ${key}
+%{ endfor ~}
 
 chpasswd:
   expire: false
 
 timezone: Europe/Warsaw
-resize_rootfs: false
+resize_rootfs: true
 
 write_files:
   # disable IPv6
@@ -28,9 +28,14 @@ write_files:
       net.ipv6.conf.all.disable_ipv6=1
       net.ipv6.conf.default.disable_ipv6=1
 
+packages:
+  - qemu-guest-agent
+%{ for package in packages ~}
+  - ${package}
+%{ endfor ~}
+
 runcmd:
-  - [ apt, -y, -qq, update ]
-  - [ apt, -y, -qq, install, qemu-guest-agent%{ for package in packages ~}, ${package}%{ endfor ~} ]
+  - sysctl -p /etc/sysctl.d/99-custom.conf
 %{ if install_docker ~}
   - [ curl, -fsSL, https://get.docker.com, -o, get-docker.sh ]
   - [ sh, get-docker.sh ]
