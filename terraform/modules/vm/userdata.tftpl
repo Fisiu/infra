@@ -34,6 +34,7 @@ runcmd:
 %{ if install_docker ~}
   - [ curl, -fsSL, https://get.docker.com, -o, get-docker.sh ]
   - [ sh, get-docker.sh ]
+  - [ systemctl, enable, --now, docker ]
 %{endif ~}
 
 ntp:
