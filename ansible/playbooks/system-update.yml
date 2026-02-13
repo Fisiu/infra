@@ -22,6 +22,21 @@
         var: apt_upgrade_result.stdout_lines
       when: apt_upgrade_result.changed
 
+    - name: Remove unused dependency packages (autoremove)
+      ansible.builtin.apt:
+        autoremove: yes
+        purge: yes
+      register: apt_autoremove_result
+
+    - name: Display autoremove results
+      ansible.builtin.debug:
+        var: apt_autoremove_result.stdout_lines
+      when: apt_autoremove_result.changed
+
+    - name: Clean local repository of retrieved package files
+      ansible.builtin.apt:
+        autoclean: yes
+
     - name: Check if reboot is required
       ansible.builtin.stat:
         path: /var/run/reboot-required
