@@ -32,6 +32,7 @@ vault_app_infisical_url: "{{ lookup('infisical', 'vault_app_infisical_url', path
 vault_app_homeassistant_url: "{{ lookup('infisical', 'vault_app_homeassistant_url', path='/apps') }}"
 vault_app_proxmox_url: "{{ lookup('infisical', 'vault_app_proxmox_url', path='/apps') }}"
 vault_app_grafana_url: "{{ lookup('infisical', 'vault_app_grafana_url', path='/apps') }}"
+vault_app_jenkins_url: "{{ lookup('infisical', 'vault_app_jenkins_url', path='/apps') }}"
 ## End
 
 traefik_image: traefik:v3

@@ -157,3 +157,9 @@ http:
       middlewares:
         - lan-only@file
       tls: *tls
+    # jenkins on proxmox (lfs261)
+    proxmox-jenkins:
+      rule: "Host(`jenkins.{{ vault_traefik_domain }}`)"
+      service: proxmox-jenkins
+      entryPoints: *https
+      tls: *tls

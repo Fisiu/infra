@@ -103,3 +103,8 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_grafana_url }}
+    # jenkins on proxmox
+    proxmox-jenkins:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_jenkins_url }}
