@@ -6,7 +6,7 @@ services:
     image: {{ cloudflare_image }}
     container_name: {{ cloudflare_tunnel_name }}
     restart: {{ restart_policy }}
-    command: tunnel --no-autoupdate run
+    command: tunnel --no-autoupdate --protocol http2 run
     environment:
       - TZ={{ system_timezone }}
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
