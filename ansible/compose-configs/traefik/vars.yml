@@ -22,6 +22,7 @@ vault_app_calibre_url: "{{ lookup('infisical', 'vault_app_calibre_url', path='/a
 vault_app_kosync_url: "{{ lookup('infisical', 'vault_app_kosync_url', path='/apps') }}"
 vault_app_jellyfin_url: "{{ lookup('infisical', 'vault_app_jellyfin_url', path='/apps') }}"
 vault_app_joplin_url: "{{ lookup('infisical', 'vault_app_joplin_url', path='/apps') }}"
+vault_app_trilium_url: "{{ lookup('infisical', 'vault_app_trilium_url', path='/apps') }}"
 vault_app_audiobookshelf_url: "{{ lookup('infisical', 'vault_app_audiobookshelf_url', path='/apps') }}"
 vault_app_navidrome_url: "{{ lookup('infisical', 'vault_app_navidrome_url', path='/apps') }}"
 vault_app_paperless_url: "{{ lookup('infisical', 'vault_app_paperless_url', path='/apps') }}"

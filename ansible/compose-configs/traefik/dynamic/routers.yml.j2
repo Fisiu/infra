@@ -72,6 +72,14 @@ http:
       service: ds224-joplin
       entryPoints: *https
       tls: *tls
+    # trilium on ds224
+    ds224-trilium:
+      rule: "Host(`trilium.{{ vault_traefik_domain }}`) || Host(`notes.{{ vault_traefik_domain }}`)"
+      service: ds224-trilium
+      entryPoints: *https
+      middlewares:
+        - lan-only@file
+      tls: *tls
     # audiobookshelf on ds224
     ds224-audiobookshelf:
       rule: "Host(`audiobooks.{{ vault_traefik_domain }}`)"

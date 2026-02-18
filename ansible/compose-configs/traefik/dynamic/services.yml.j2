@@ -48,6 +48,11 @@ http:
       loadBalancer:
         servers:
           - url: {{ vault_app_joplin_url }}
+    # trilium on ds224
+    ds224-trilium:
+      loadBalancer:
+        servers:
+          - url: {{ vault_app_trilium_url }}
     # audiobookshelf on ds224
     ds224-audiobookshelf:
       loadBalancer:
