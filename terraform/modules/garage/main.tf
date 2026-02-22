@@ -1,5 +1,5 @@
 resource "garage_bucket" "this" {
-  for_each = toset(concat(var.buckets, ["opentofu"]))
+  for_each = toset(var.buckets)
 
   global_alias = each.value
 }
