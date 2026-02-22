@@ -63,7 +63,8 @@ resource "proxmox_vm_qemu" "vm" {
   os_type = "cloud-init"
   lifecycle {
     ignore_changes = [
-      network # Prevent Terraform from detecting changes in the network configuration
+      network,          # prevent opentofu from detecting changes in the network configuration
+      startup_shutdown, # prevent opentofu from detecting changes in the startup configuration
     ]
   }
 }
