@@ -32,7 +32,7 @@ variable "s3_admin_token" {
   sensitive = true
 }
 
-# S3
-variable "s3_buckets" {
-  description = "List of S3 buckets"
+# Garage
+variable "garage_buckets" {
+  description = "List of garage buckets"
 }

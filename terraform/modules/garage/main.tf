@@ -1,4 +1,4 @@
-resource "garage_bucket" "s3" {
+resource "garage_bucket" "this" {
   for_each = toset(concat(var.buckets, ["opentofu"]))
 
   global_alias = each.value

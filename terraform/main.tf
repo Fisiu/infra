@@ -1,6 +1,6 @@
-module "s3" {
-  source  = "./modules/nas-s3"
-  buckets = var.s3_buckets
+module "garage" {
+  source  = "./modules/garage"
+  buckets = var.garage_buckets
 }
 
 module "vms" {
