@@ -21,6 +21,7 @@ variable "vm_configs" {
     packages       = optional(list(string), [])
     install_docker = optional(bool, false)
     commands       = optional(list(string), [])
+    swap_size      = optional(number, 0)
     vmid           = optional(number)
     networks = list(object({
       bridge   = optional(string, "vmbr0")

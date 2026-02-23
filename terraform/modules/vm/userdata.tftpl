@@ -20,6 +20,12 @@ chpasswd:
 timezone: Europe/Warsaw
 resize_rootfs: true
 
+%{ if swap_size > 0 ~}
+swap:
+  filename: /swap.img
+  size: ${swap_size}
+%{ endif ~}
+
 write_files:
   # disable IPv6
   - path: /etc/sysctl.d/99-custom.conf

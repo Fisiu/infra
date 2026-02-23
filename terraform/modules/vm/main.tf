@@ -87,6 +87,7 @@ resource "local_file" "cloud_init_user_data_file" {
     packages       = each.value.packages
     install_docker = each.value.install_docker
     commands       = each.value.commands
+    swap_size      = each.value.swap_size
   })
   filename = "${path.module}/cloud-init/${each.value.name}-user-data"
 }
