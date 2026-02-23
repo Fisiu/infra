@@ -14,6 +14,10 @@ terraform {
       source  = "telmate/proxmox"
       version = "3.0.2-rc07"
     }
+    infisical = {
+      source  = "infisical/infisical"
+      version = "0.16.4"
+    }
   }
 
   # TODO: It sems backend is not working with garage s3
@@ -33,11 +37,18 @@ terraform {
   # }
 }
 
+provider "infisical" {
+  # configured with the following env variables:
+  # INFISICAL_HOST
+  # INFISICAL_UNIVERSAL_AUTH_CLIENT_ID
+  # INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET
+}
+
 provider "proxmox" {
-  pm_api_url          = var.pm_api_url
-  pm_api_token_id     = var.pm_api_token_id
-  pm_api_token_secret = var.pm_api_token_secret
-  pm_tls_insecure     = var.pm_tls_insecure
+  pm_api_url          = local.pm_api_url
+  pm_api_token_id     = local.pm_api_token_id
+  pm_api_token_secret = local.pm_api_token_secret
+  pm_tls_insecure     = local.pm_tls_insecure
 }
 
 provider "garage" {
