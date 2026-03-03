@@ -12,6 +12,7 @@ variable "vm_configs" {
     tags           = optional(string, "")
     onboot         = optional(bool, true)
     cores          = optional(number, 1)
+    cpu_limit      = optional(number)
     memory         = optional(number, 1024)
     disk_size      = optional(string, "1G")
     agent          = optional(number, 1)

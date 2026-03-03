@@ -55,6 +55,7 @@ resource "proxmox_vm_qemu" "vm" {
   cpu {
     sockets = 1
     cores   = each.value.cores
+    limit   = each.value.cpu_limit
   }
   memory = each.value.memory
   scsihw = "virtio-scsi-single"
