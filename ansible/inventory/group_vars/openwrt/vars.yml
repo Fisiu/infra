@@ -5,7 +5,7 @@
 ansible_ssh_pipelining: true
 
 # Packages to exclude from upgrade
-opkg_upgrade_ignore: "kernel"
+apk_upgrade_ignore: "kernel"
 
 # Reboot only if these packages are upgraded
 critical_packages: "kernel"

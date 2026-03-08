@@ -12,31 +12,36 @@
       changed_when: false
       when: backup_config | bool
 
-    - name: Run opkg update
-      ansible.builtin.raw: opkg update
-      register: opkg_update
+    - name: Run apk update
+      ansible.builtin.raw: apk update
+      register: apk_update
       changed_when: false
       ignore_errors: true
 
     - name: List upgradable packages (excluding ignored)
       ansible.builtin.raw: >
-        opkg list-upgradable | grep -vE '{{ opkg_upgrade_ignore }}' | cut -f 1 -d ' ' || true
+        apk list --upgradable 2>/dev/null | sed 's/^[[:space:]]*//' | sed 's/-[0-9].*$//' | grep -vE '{{ apk_upgrade_ignore }}' | grep -v '^$' || true
       register: upgradable
       changed_when: false
 
-    - name: Upgrade packages
-      ansible.builtin.raw: >
-        opkg list-upgradable | grep -vE '{{ opkg_upgrade_ignore }}' | cut -f 1 -d ' ' | xargs -r opkg upgrade
+    - name: Upgrade packages from upgradable list
+      ansible.builtin.raw: "apk upgrade {{ item }}"
+      loop: "{{ upgradable.stdout_lines | select('match', '^[a-zA-Z0-9]') | list }}"
       when: upgradable.stdout | length > 0
-      register: upgrade_result
-      changed_when: upgrade_result.rc == 0 and 'Upgrading' in upgrade_result.stdout
+      register: upgrade_results
+      changed_when: "'Upgrading' in upgrade_results.stdout | default('')"
+
+    - name: Check if any critical package was upgraded
+      ansible.builtin.set_fact:
+        critical_upgraded: "{{ upgrade_results.results | selectattr('stdout', 'defined') | selectattr('stdout', 'search', critical_packages) | list | length > 0 }}"
+      when: upgradable.stdout | length > 0
 
     - name: Reboot if critical package upgraded
       ansible.builtin.reboot:
         reboot_timeout: 120
       when:
         - upgrade_result.changed | default(false)
-        - upgrade_result.stdout is regex(critical_packages)
+        - critical_upgraded | default(false)
 
     - name: Wait for router to come back
       ansible.builtin.wait_for_connection:
@@ -45,4 +50,4 @@
         sleep: 10
       when:
         - upgrade_result.changed | default(false)
-        - critical_packages | default('') in upgrade_result.stdout
+        - critical_upgraded | default(false)
