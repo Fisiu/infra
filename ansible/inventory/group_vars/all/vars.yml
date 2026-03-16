@@ -36,5 +36,5 @@ debian_packages:
   - reboot-notifier
 
 # Groups/hosts that should run docker-related tasks
-docker_enabled_groups: ["homelab"]
+docker_enabled_groups: ["minipc"]
 coral_edgetpu_host: minipc

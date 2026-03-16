@@ -2,7 +2,7 @@
 # deploy-cloudflare-tunnel.yml
 
 - name: Deploy Cloudflare Tunnel
-  hosts: homelab
+  hosts: minipc
   become: true
 
   vars_files:

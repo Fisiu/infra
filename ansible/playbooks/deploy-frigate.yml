@@ -2,7 +2,7 @@
 # deploy-frigate.yml
 
 - name: Deploy Frigate
-  hosts: homelab
+  hosts: minipc
   become: true
 
   vars_files:

@@ -2,7 +2,7 @@
 # deploy-gotify.yml
 
 - name: Deploy Gotify
-  hosts: homelab
+  hosts: minipc
   become: true
 
   vars_files:
