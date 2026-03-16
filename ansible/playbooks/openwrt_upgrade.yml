@@ -7,11 +7,6 @@
   serial: 1
 
   tasks:
-    - name: Backup config before upgrade
-      ansible.builtin.raw: sysupgrade -b {{ backup_path }}
-      changed_when: false
-      when: backup_config | bool
-
     - name: Run apk update
       ansible.builtin.raw: apk update
       register: apk_update
@@ -24,30 +19,38 @@
       register: upgradable
       changed_when: false
 
+    - name: Backup config before upgrade
+      ansible.builtin.raw: sysupgrade -b {{ backup_path }}
+      when:
+        - backup_config | bool
+        - (upgradable.stdout | default('')) | length > 0
+
     - name: Upgrade packages from upgradable list
       ansible.builtin.raw: "apk upgrade {{ item }}"
-      loop: "{{ upgradable.stdout_lines | select('match', '^[a-zA-Z0-9]') | list }}"
-      when: upgradable.stdout | length > 0
+      loop: "{{ upgradable.stdout_lines | default([]) | select('match', '^[a-zA-Z0-9]') | list }}"
+      when: (upgradable.stdout | default('')) | length > 0
       register: upgrade_results
       changed_when: "'Upgrading' in upgrade_results.stdout | default('')"
 
     - name: Check if any critical package was upgraded
       ansible.builtin.set_fact:
-        critical_upgraded: "{{ upgrade_results.results | selectattr('stdout', 'defined') | selectattr('stdout', 'search', critical_packages) | list | length > 0 }}"
-      when: upgradable.stdout | length > 0
+        critical_upgraded: >-
+          {{ upgrade_results.results
+            | selectattr('stdout', 'defined')
+            | selectattr('stdout', 'search', critical_packages)
+            | list
+            | length > 0 }}
+      when: (upgradable.stdout | default('')) | length > 0
 
     - name: Reboot if critical package upgraded
-      ansible.builtin.reboot:
-        reboot_timeout: 120
+      ansible.builtin.raw: reboot
       when:
-        - upgrade_result.changed | default(false)
         - critical_upgraded | default(false)
 
+    # it needs 'python3' on the router
     - name: Wait for router to come back
       ansible.builtin.wait_for_connection:
-        delay: 30
-        timeout: 120
-        sleep: 10
+        delay: 15
+        timeout: 60
       when:
-        - upgrade_result.changed | default(false)
         - critical_upgraded | default(false)
