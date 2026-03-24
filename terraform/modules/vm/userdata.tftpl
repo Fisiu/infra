@@ -2,7 +2,7 @@
 hostname: ${hostname}
 disable_root: true
 users:
-- name: core
+- name: ${username}
   primary_group: users
   groups: users, wheel%{ if install_docker }, docker%{ endif }
   no_user_group: true

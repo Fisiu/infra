@@ -83,6 +83,7 @@ resource "local_file" "cloud_init_user_data_file" {
 
   content = templatefile("${path.module}/userdata.tftpl", {
     hostname       = each.value.name
+    username       = each.value.username
     password       = each.value.password
     ssh_keys       = each.value.ssh_pub_keys
     packages       = each.value.packages

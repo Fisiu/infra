@@ -17,13 +17,14 @@ variable "vm_configs" {
     disk_size      = optional(string, "1G")
     agent          = optional(number, 1)
     skip_ipv6      = optional(bool, true)
+    username       = optional(string, "core")
     password       = string
     ssh_pub_keys   = list(string)
     packages       = optional(list(string), [])
     install_docker = optional(bool, false)
     commands       = optional(list(string), [])
     swap_size      = optional(number, 0)
-    vmid           = optional(number)
+    vmid           = number
     networks = list(object({
       bridge   = optional(string, "vmbr0")
       vlan     = optional(string, "")
