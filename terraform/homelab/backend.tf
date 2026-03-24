@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket   = "opentofu-state"
-    key      = "main.tfstate"
+    key      = "homelab/opentofu.tfstate"
     region   = "garage"
     endpoint = var.s3_endpoint
     # access_key = "" # AWS_ACCESS_KEY_ID

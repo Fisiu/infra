@@ -29,3 +29,13 @@ locals {
   pm_api_token_secret = sensitive(data.infisical_secrets.infrastructure.secrets["PM_API_TOKEN_SECRET"].value)
   pm_tls_insecure     = try(tobool(data.infisical_secrets.infrastructure.secrets["PM_TLS_INSECURE"].value), true)
 }
+
+locals {
+  vm_username  = data.infisical_secrets.infrastructure.secrets["VM_USERNAME"].value
+  vm_password  = sensitive(data.infisical_secrets.infrastructure.secrets["VM_PASSWORD"].value)
+  lxc_password = sensitive(data.infisical_secrets.infrastructure.secrets["LXC_PASSWORD"].value)
+}
+
+locals {
+  ssh_public_keys = nonsensitive(tolist(split("\n", trimspace(data.infisical_secrets.infrastructure.secrets["SSH_PUBLIC_KEYS"].value))))
+}

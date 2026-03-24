@@ -13,7 +13,7 @@ resource "proxmox_vm_qemu" "vm" {
   start_at_node_boot = each.value.onboot
   agent              = each.value.agent
   skip_ipv6          = each.value.skip_ipv6
-  vmid               = coalesce(each.value.vmid, 200 + index(var.vm_configs, each.value))
+  vmid               = each.value.vmid
 
   disks {
     scsi {

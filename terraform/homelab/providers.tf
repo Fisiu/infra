@@ -19,22 +19,6 @@ terraform {
       version = "0.16.4"
     }
   }
-
-  # TODO: It sems backend is not working with garage s3
-  # backend "s3" {
-  #   bucket = "opentofu"
-  #   key    = "terraform.tfstate"
-
-  #   endpoints = {
-  #     s3 = var.s3_endpoint
-  #   }
-  #   region                      = var.s3_region
-  #   skip_credentials_validation = true
-  #   skip_metadata_api_check     = true
-  #   skip_region_validation      = true
-  #   skip_requesting_account_id  = true
-  #   use_path_style              = true
-  # }
 }
 
 provider "infisical" {

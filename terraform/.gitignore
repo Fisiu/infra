@@ -47,6 +47,7 @@ cloud-init/
 
 # direnv
 .envrc
+.env
 
 # mise
 .mise.toml
