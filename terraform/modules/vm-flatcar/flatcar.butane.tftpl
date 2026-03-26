@@ -1,0 +1,31 @@
+variant: flatcar
+version: 1.1.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+%{ for key in ssh_keys ~}
+        - ${key}
+%{ endfor ~}
+      groups:
+        - wheel
+storage:
+  files:
+    - path: /etc/sysctl.d/99-disable-ipv6.conf
+      mode: 644
+      contents:
+        inline: |
+          net.ipv6.conf.all.disable_ipv6=1
+          net.ipv6.conf.default.disable_ipv6=1
+    - path: /opt/bin/docker-compose
+      mode: 0755
+      contents:
+        inline: |
+          #!/bin/bash
+          # Wrapper to run docker-compose in a container
+          docker run --rm -it \
+            --name docker-compose \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$PWD:$PWD" \
+            -w "$PWD" \
+            docker/compose:latest "$@"

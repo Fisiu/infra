@@ -27,6 +27,7 @@ locals {
   pm_api_url          = data.infisical_secrets.infrastructure.secrets["PM_API_URL"].value
   pm_api_token_id     = sensitive(data.infisical_secrets.infrastructure.secrets["PM_API_TOKEN_ID"].value)
   pm_api_token_secret = sensitive(data.infisical_secrets.infrastructure.secrets["PM_API_TOKEN_SECRET"].value)
+  pm_api_token        = sensitive(data.infisical_secrets.infrastructure.secrets["PM_API_TOKEN"].value)
   pm_tls_insecure     = try(tobool(data.infisical_secrets.infrastructure.secrets["PM_TLS_INSECURE"].value), true)
 }
 

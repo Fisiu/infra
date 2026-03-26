@@ -11,12 +11,20 @@ terraform {
       version = ">= 3.0"
     }
     proxmox = {
+      source  = "bpg/proxmox"
+      version = "0.99.0"
+    }
+    telmate = {
       source  = "telmate/proxmox"
       version = "3.0.2-rc07"
     }
     infisical = {
       source  = "infisical/infisical"
       version = "0.16.4"
+    }
+    ct = {
+      source  = "poseidon/ct"
+      version = "0.14.0"
     }
   }
 }
@@ -29,6 +37,17 @@ provider "infisical" {
 }
 
 provider "proxmox" {
+  endpoint  = local.pm_api_url
+  api_token = local.pm_api_token
+  insecure  = local.pm_tls_insecure
+
+  ssh {
+    agent    = true
+    username = "root"
+  }
+}
+
+provider "telmate" {
   pm_api_url          = local.pm_api_url
   pm_api_token_id     = local.pm_api_token_id
   pm_api_token_secret = local.pm_api_token_secret

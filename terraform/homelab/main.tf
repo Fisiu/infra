@@ -14,3 +14,9 @@ module "lxc" {
   target_node = local.target_node
   lxc_configs = local.lxc_configs
 }
+
+module "vms_flatcar" {
+  source      = "../modules/vm-flatcar"
+  target_node = local.target_node
+  vm_configs  = local.vm_flatcar_configs
+}
