@@ -15,9 +15,13 @@
 
     - name: List upgradable packages (excluding ignored)
       ansible.builtin.raw: >
-        apk list --upgradable 2>/dev/null | sed 's/^[[:space:]]*//' | sed 's/-[0-9].*$//' | grep -vE '{{ apk_upgrade_ignore }}' | grep -v '^$' || true
+        apk list --upgradable 2>/dev/null | cut -d' ' -f1 | sed -E 's/-[0-9].*//' | grep -vE '{{ apk_upgrade_ignore | default("none") }}' | grep -v '^$' || true
       register: upgradable
       changed_when: false
+
+    - name: Prepare package list string
+      ansible.builtin.set_fact:
+        package_list: "{{ upgradable.stdout_lines | map('trim') | select | list }}"
 
     - name: Backup config before upgrade
       ansible.builtin.raw: sysupgrade -b {{ backup_path }}
@@ -26,28 +30,25 @@
         - (upgradable.stdout | default('')) | length > 0
 
     - name: Upgrade packages from upgradable list
-      ansible.builtin.raw: "apk upgrade {{ item }}"
-      loop: "{{ upgradable.stdout_lines | default([]) | select('match', '^[a-zA-Z0-9]') | list }}"
-      when: (upgradable.stdout | default('')) | length > 0
+      ansible.builtin.raw: "apk upgrade {{ package_list | join(' ') }}"
+      when: package_list | length > 0
       register: upgrade_results
+      until: upgrade_results.rc == 0
+      retries: 3
+      delay: 5
       changed_when: "'Upgrading' in upgrade_results.stdout | default('')"
 
     - name: Check if any critical package was upgraded
       ansible.builtin.set_fact:
-        critical_upgraded: >-
-          {{ upgrade_results.results
-            | selectattr('stdout', 'defined')
-            | selectattr('stdout', 'search', critical_packages)
-            | list
-            | length > 0 }}
+        critical_upgraded: "{{ upgrade_results.stdout | default('') is ansible.builtin.search(critical_packages) }}"
       when: (upgradable.stdout | default('')) | length > 0
 
     - name: Reboot if critical package upgraded
       ansible.builtin.raw: reboot
-      # Rebooting always after any upgrade might be a good idea, it's a router/ap ;)
-      # Let's keep above critical_upgraded check for now
       when:
-        - critical_upgraded | default(true)
+        - critical_upgraded | default(false)
+      async: 1
+      poll: 0
 
     # it needs 'python3' on the router
     - name: Wait for router to come back
