@@ -44,8 +44,10 @@
 
     - name: Reboot if critical package upgraded
       ansible.builtin.raw: reboot
+      # Rebooting always after any upgrade might be a good idea, it's a router/ap ;)
+      # Let's keep above critical_upgraded check for now
       when:
-        - critical_upgraded | default(false)
+        - critical_upgraded | default(true)
 
     # it needs 'python3' on the router
     - name: Wait for router to come back
