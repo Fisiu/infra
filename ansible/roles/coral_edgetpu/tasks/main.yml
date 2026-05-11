@@ -35,4 +35,4 @@
   ansible.builtin.apt:
     name: "{{ coral_edgetpu_packages }}"
     state: present
-    update_cache: yes
+    update_cache: true
